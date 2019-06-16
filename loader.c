@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/16 06:39:30 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/16 06:51:43 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void    init_process(t_vm *vm)
 
     process = fork_process();
     // add this process to the process_list 
-    process->registers[0] = id;
+    process->registers[0] = 0;
     // set ownership
 }
 
@@ -39,4 +39,11 @@ void    load_champ(t_vm *vm, int fd)
 	if (read(fd, pc, hdr->prog_size) != hdr->prog_size)
 		PERROR("read");
 	close(fd);
+}
+
+
+void    loader(t_vm *vm, int fd)
+{
+    load_champ(vm, fd);
+    init_process(vm);
 }
