@@ -6,13 +6,13 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/16 06:19:29 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/17 00:34:27 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "vm.h"
-
+#include <stdio.h>
 
 void    read_args(t_vm *vm, int ac, char **av)
 {
@@ -22,23 +22,18 @@ void    read_args(t_vm *vm, int ac, char **av)
     i = 1;
     while (i < ac)
     {
-        if ((fd = open(av[i], O_RDONLY)) == -1)
-            ERROR(); 
-        load_champ(&vm, fd);
-        
+        loader(vm, av[i]);
+        i++;
     }
-
-
 }
 
 int     main(int ac, char **av)
 {
     t_vm vm;
     
-    if (ac <  2)
-        usage();
+    if (ac < 2)
+        printf("ac \n");
+    printf("testing\n");
     read_args(&vm, ac, av);
-    loader(&vm);
-    cpu();
     return (0);
 }

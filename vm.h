@@ -6,18 +6,19 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/16 06:35:30 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/17 00:19:10 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VM_H
 #define VM_H
+
+ #include <unistd.h>
 #include "common.h"
 #include "op.h"
 
 #define MAGIC_NUM_R 0x83F300EA
-#define REVERSE_BIT reverseBits
-	
+
 typedef struct		s_hdr
 {
 	uint32_t		magic;
@@ -71,5 +72,12 @@ typedef struct      s_vm
 }                   t_vm;
 
 // parser
-void    parse_champ_header(t_hdr *hdr, int fd);
-#endif VM_H
+void			parse_champ_header(t_hdr *hdr, int fd);
+
+// helper 
+unsigned int	reverseBits(unsigned int num);
+
+//loader
+void    		loader(t_vm *vm, char *filename);
+
+#endif

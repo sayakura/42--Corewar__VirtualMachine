@@ -3,7 +3,15 @@
 
 #include <stdint.h>
 #include <fcntl.h>
-typedef bool uint8_t;
+#include <stdio.h>
 
+#define bool uint8_t;
+#define REVERSE_BIT reverseBits
+#define PERROR perror_
+#define ERROR(s) printf(s);
 
+//lib	
+void			perror_(const char *s);
+void            *memcpy_(void *dst, const void *src, size_t n);
+int             strlen_(char *str);
 #endif
