@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/17 00:19:10 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/18 03:14:33 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,15 @@
 #include "common.h"
 #include "op.h"
 
-#define MAGIC_NUM_R 0x83F300EA
+#define MAGIC_NUM 0xea83f3
+
+enum e_process_state
+{
+	CREATE,
+	RUNNING,
+	WAITING,
+	TERMINATED
+};
 
 typedef struct		s_hdr
 {
@@ -27,14 +35,15 @@ typedef struct		s_hdr
 	char			comment[COMMENT_LENGTH + 1];
 }					t_hdr;
 
-typedef struct      s_process
+typedef struct      	s_process
 {
-    int32_t         registers[REG_NUMBER];
-    int             state;
-    void            *pc;
-    uint8_t         pid;
-    int8_t          carry : 1;
-}                   t_process;
+    int32_t         	registers[REG_NUMBER];
+    int             	state;
+    void            	*pc;
+    uint8_t         	pid;
+    int8_t          	carry : 1;
+	struct s_process	*next;
+}                   	t_process;
 
 typedef struct      s_instr
 {
@@ -53,8 +62,11 @@ typedef struct      s_champ
 
 typedef struct      s_cw
 {
+	uint32_t		cycle;
 	t_champ			champions[MAX_PLAYERS];
-    
+	uint8_t			ownership[MEM_SIZE];
+	uint32_t		dump_cycle;
+	uint32_t 		kill_cycle;
 }                   t_cw;
 
 typedef struct      s_loader
@@ -64,19 +76,21 @@ typedef struct      s_loader
 typedef struct      s_vm
 {
 	uint8_t			memory[MEM_SIZE];
-	uint8_t			ownership[MEM_SIZE];
     t_process       *process_list;
-    t_cw            corewar;
+	uint8_t			nprocess;
     uint8_t         nplayers;
-    
+    t_cw            corewar;
 }                   t_vm;
 
 // parser
 void			parse_champ_header(t_hdr *hdr, int fd);
 
 // helper 
-unsigned int	reverseBits(unsigned int num);
+void    		rev_bytes(void *ptr, size_t n);
+void			puthex(unsigned char c);
 
+void    		print_mem(t_vm *vm);
+void			bzero_(void *rsi, size_t rcx);
 //loader
 void    		loader(t_vm *vm, char *filename);
 
