@@ -15,9 +15,9 @@ void    parse_champ_header(t_hdr *hdr, int fd)
     if (read(fd, hdr, sizeof(t_hdr)) != sizeof(t_hdr))
         PERROR("read");
     rev_bytes(&hdr->magic, sizeof(hdr->magic));
-	if (hdr->magic != MAGIC_NUM)
+	if (hdr->magic != COREWAR_EXEC_MAGIC)
 	{
-        printf("%x %x\n", hdr->magic, MAGIC_NUM);
+        printf("%x %x\n", hdr->magic, COREWAR_EXEC_MAGIC);
         ERROR("Invalid header\n");
     }
     rev_bytes(&hdr->prog_size, sizeof(hdr->prog_size));

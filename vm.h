@@ -13,11 +13,9 @@
 #ifndef VM_H
 #define VM_H
 
- #include <unistd.h>
+#include <unistd.h>
 #include "common.h"
 #include "op.h"
-
-#define MAGIC_NUM 0xea83f3
 
 enum e_process_state
 {
@@ -26,6 +24,18 @@ enum e_process_state
 	WAITING,
 	TERMINATED
 };
+
+typedef struct		s_op
+{
+	char			*name;
+	int				argc;
+	t_arg_type		argv[MAX_ARGS_NUMBER];
+	char			opcode;
+	uint32_t		cycles;
+	char			*des;
+	bool			coding_byte;
+	bool			direct;
+}					t_op;
 
 typedef struct		s_hdr
 {
