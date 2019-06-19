@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/18 03:14:33 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/19 06:57:26 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <unistd.h>
 #include "common.h"
 #include "op.h"
+#include <stdbool.h>
+
 
 enum e_process_state
 {
@@ -33,8 +35,8 @@ typedef struct		s_op
 	char			opcode;
 	uint32_t		cycles;
 	char			*des;
-	bool			coding_byte;
-	bool			direct;
+	bool			cb;
+	// bool			direct;
 }					t_op;
 
 typedef struct		s_hdr
@@ -45,22 +47,27 @@ typedef struct		s_hdr
 	char			comment[COMMENT_LENGTH + 1];
 }					t_hdr;
 
+typedef struct 		s_task
+{
+	uint8_t			opcode;
+	int				argc;
+	t_arg_type		argv[MAX_ARGS_NUMBER];
+	bool			coding_byte;
+	bool			direct;
+	uint16_t		cycle_left;
+}					t_task;
+
 typedef struct      	s_process
 {
     int32_t         	registers[REG_NUMBER];
     int             	state;
-    void            	*pc;
+    u_int8_t            *pc;
     uint8_t         	pid;
     int8_t          	carry : 1;
+	t_task				cur_task;
+	uint16_t			remaining_cycle;
 	struct s_process	*next;
 }                   	t_process;
-
-typedef struct      s_instr
-{
-    
-
-
-}                   t_instr;
 
 
 typedef struct      s_champ
@@ -92,6 +99,8 @@ typedef struct      s_vm
     t_cw            corewar;
 }                   t_vm;
 
+extern t_op g_op_tab[17];
+extern uint8_t	*g_base;
 // parser
 void			parse_champ_header(t_hdr *hdr, int fd);
 

@@ -6,13 +6,14 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/18 02:38:56 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/19 06:22:41 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "vm.h"
 #include <stdio.h>
+uint8_t	*g_base;
 
 void    run(t_vm *vm)
 {
@@ -60,6 +61,7 @@ int     main(int ac, char **av)
     
     bzero_(&vm, sizeof(t_vm));
     vm.nplayers = ac - 1;
+    g_base = vm.memory;
     setbuf(stdout, NULL);
     if (ac < 2)
         printf("ac \n");

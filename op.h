@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/10/04 11:33:27 by zaz               #+#    #+#             */
-/*   Updated: 2019/06/18 00:46:45 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/19 05:21:09 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,5 @@ typedef struct		header_s
   char				    comment[COMMENT_LENGTH + 1];
 }					header_t;
 
-
-typedef struct  	s_op t_op;
 
 #endif
