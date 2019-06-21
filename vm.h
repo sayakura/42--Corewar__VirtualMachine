@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/19 06:57:26 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/20 17:18:32 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,20 @@
 #include <unistd.h>
 #include "common.h"
 #include "op.h"
-#include <stdbool.h>
+#include "handler.h"
 
+#define ITERATOR -1
+#define INC(num) (++num)
+#define EDI_TYPE (acb) (acb & 0b11000000)
+#define ESI_TYPE (acb) (acb & 0b00110000)
+#define ECX_TYPE (acb) (acb & 0b00001100)
+#define REGISTER_TYPE 0b01000000
+#define DIRECT_TYPE 0b10000000
+
+typedef uint8_t t_bool;
+typedef uint8_t t_byte;
+typedef uint32_t t_word;
+typedef t_bool(*t_instr_hdlr)(t_arg_type *, t_byte **, t_bool *);
 
 enum e_process_state
 {
@@ -27,17 +39,24 @@ enum e_process_state
 	TERMINATED
 };
 
+// typedef struct 		s_cpu
+// {
+// 	t_arg_type   argvt[MAX_ARGS_NUMBER];
+//     uint8_t      *argv[MAX_ARGS_NUMBER];
+// }					t_cpu;
+
 typedef struct		s_op
 {
 	char			*name;
 	int				argc;
-	t_arg_type		argv[MAX_ARGS_NUMBER];
+	t_arg_type		argvt[MAX_ARGS_NUMBER];
 	char			opcode;
 	uint32_t		cycles;
 	char			*des;
-	bool			cb;
-	// bool			direct;
+	bool			coding_byte;
+	bool			direct;
 }					t_op;
+
 
 typedef struct		s_hdr
 {
@@ -49,19 +68,16 @@ typedef struct		s_hdr
 
 typedef struct 		s_task
 {
-	uint8_t			opcode;
-	int				argc;
-	t_arg_type		argv[MAX_ARGS_NUMBER];
-	bool			coding_byte;
-	bool			direct;
-	uint16_t		cycle_left;
+	t_op			op_info;
+	uint64_t		argv[MAX_ARGS_NUMBER];
 }					t_task;
 
 typedef struct      	s_process
 {
-    int32_t         	registers[REG_NUMBER];
+    t_word         		registers[REG_NUMBER];
     int             	state;
-    u_int8_t            *pc;
+    t_byte            	*pc;
+	t_byte				*ip;
     uint8_t         	pid;
     int8_t          	carry : 1;
 	t_task				cur_task;

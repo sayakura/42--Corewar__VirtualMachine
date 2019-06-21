@@ -6,16 +6,34 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/19 06:57:34 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/20 17:19:33 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vm.h"
 
+static t_instr_hdlr instr_funptr[] = {
+    ft_live,
+    ft_ld,
+    ft_st,
+    ft_add,
+    ft_sub,
+    ft_and, 
+    ft_or,
+    ft_xor,
+    ft_zjmp,
+    ft_ldi,
+    ft_sti,
+    ft_fork,
+    ft_lld,
+    ft_lldi,
+    ft_lfork,
+    ft_aff
+};
 
-uint8_t    *addr(uint8_t *cur, off_t offset)
+t_byte    *addr(t_byte *cur, off_t offset)
 {
-    uint8_t *end;
+    t_byte *end;
     off_t   diff;
 
     end = g_base + MEM_SIZE;
@@ -25,68 +43,114 @@ uint8_t    *addr(uint8_t *cur, off_t offset)
         return (cur);
 }
 
-void    exec_task(t_task *task)
+// t->coding_byte = g_op_tab[t->opcode].coding_byte;
+// t->direct = g_op_tab[t->opcode].direct;
+
+
+// bool    load_pc(t_byte *pc, t_task *t)
+// {
+//     t_byte     i;
+//     t_byte     acb;
+
+//     i = 0;
+//     memcpy_(&t->op_info, &g_op_tab[*pc], sizeof(t_op));
+//     if (!t->op_info.coding_byte)
+//         return (load_pc_wo_cb(pc, t));
+//     acb = *(pc = addr(pc, 1));
+//     while (i < t->op_info.argc)
+//     {
+//         if (acb & 0xc0 == 0b00)
+//             return false;
+//         else if (acb & 0xc0 == 0x40)
+//         {
+//             memcpy_(&t->argv[i], addr(pc, REG_SIZE), REG_SIZE);
+//             pc = addr(pc, REG_SIZE);
+//         }
+// 		else if (acb & 0xc0 == 0x80)
+// 			t->argv[i] = *(pc = addr(pc, DIR_SIZE));
+// 		else
+// 			t->argv[i] = *(pc = addr(pc, IND_SIZE));
+//         acb <<= 2;
+//         i++;
+//     }
+//     return true;
+// }
+
+
+
+
+void    excute(t_byte instr, t_arg_type *argvt, t_byte **argv, uint8_t *carry)
 {
-
-
-    
+    (instr_funptr[instr])(argvt, argv, carry);
+    printf("running... %d\n", instr);
 }
 
 /*
 ** advance the program counter to the next instruction
-** meanwhile, load current instruction to current task
-** t = current task
+** and decode it into argvt and argv
 ** pc = program counter / instruction pointer
-** cb = argument's coding byte
+** acb = argument's coding byte
 */
 
-// t->coding_byte = g_op_tab[t->opcode].coding_byte;
-// t->direct = g_op_tab[t->opcode].direct;
-
-bool    load_pc(t_vm *vm, t_process *cp)
+void    fetch_decode(t_byte **pc, t_arg_type *argvt, t_byte **argv)
 {
-    uint8_t     i;
-    uint8_t     acb;
-    uint8_t     *pc;
-    t_task      *t;
+    t_byte         bcode;
+    t_byte         acb;
+    uint8_t        i;
 
-    i = 0;
-    t = &cp->cur_task;
-    t->opcode = *cp->pc;
-    t->cycle_left = g_op_tab[t->opcode].cycles;
-    pc = cp->pc;
-    acb = g_op_tab[t->opcode].cb ? *(pc = addr(pc, 1)) : 0;
-    while (i < g_op_tab[t->opcode].argc)
+    i = ITERATOR;
+    bcode = **pc;
+    acb = *(*pc = addr(*pc , 1));
+    while (INC(i) < g_op_tab[bcode].argc)
     {
-        if (acb & 0xc0 == 0b00)
-            return false;
-        else if (acb & 0xc0 == 0x40)
-            t->argv[i] = *(pc = addr(pc, T_REG));
-		else if (acb & 0xc0 == 0x80)
-			t->argv[i] = *(pc = addr(pc, T_DIR));
+        argv[i] = *pc;
+        if (acb & 0b1100000 == REGISTER_TYPE)
+        {
+            *pc = addr(*pc, REG_SIZE);
+            argvt[i] = T_REG;
+        }
+		else if (acb & 0b1100000 == DIRECT_TYPE)
+		{
+            *pc = addr(*pc, DIR_SIZE);
+            argvt[i] = T_DIR;
+        }
 		else
-			t->argv[i] = *(pc = addr(pc, T_IND));
+		{
+            *pc = addr(*pc, IND_SIZE);
+            argvt[i] = T_IND;
+        }
         acb <<= 2;
-        i++;
     }
-    cp->pc = pc;
-    return true;
 }
 
-void    run_process(t_vm *vm)
+void    instruction_cycle(t_byte   **pc)
+{
+    t_byte              instr;
+    static t_arg_type   argvt[MAX_ARGS_NUMBER];
+    static t_byte       *argv[MAX_ARGS_NUMBER];
+    static t_bool       carry;
+    
+    instr = **pc;
+    fetch_decode(pc, argvt, argv);
+    execute(instr, argvt, argv, &carry);
+}
+
+void    process_loop(t_vm   *vm)
 {
     t_process *cp;
-
+    static uint32_t r_cycles[MAX_PLAYERS];
+    
     cp = vm->process_list;
     while (cp)
     {
-       cp->cur_task.cycle_left--;
-       if (cp->cur_task.cycle_left <= 0)
-       {
-            exec_task(&cp->cur_task);
-            if (load_pc(vm, cp))
-                ; // run 
-       }
-       cp = cp->next;
+        if (!r_cycles[cp->pid])
+            r_cycles[cp->pid] = g_op_tab[*(cp->pc)].cycles;
+        r_cycles[cp->pid]--;
+        if (!r_cycles[cp->pid])
+        {
+            instruction_cycle(&cp->pc);
+            r_cycles[cp->pid] = 0;
+        }
+        cp = cp->next;
     }
 }
