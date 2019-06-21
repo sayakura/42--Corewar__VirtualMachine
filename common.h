@@ -7,10 +7,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#define bool uint8_t;
 #define REVERSE_BIT reverseBits
 #define PERROR perror_
 #define ERROR(s) ({ printf(s); exit(1);})
+#define false 0
+#define true 1
+
+typedef uint8_t t_bool;
+typedef uint8_t t_byte;
+typedef uint32_t t_word;
 
 //lib	
 void			perror_(const char *s);

@@ -1,82 +1,98 @@
 #include "handler.h"
 
-t_bool    live(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_live(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    ld(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_ld(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    st(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_st(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    add(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_add(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    sub(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_sub(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    and(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_and(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    or(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_or(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    xor(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_xor(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    zjmp(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_zjmp(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    ldi(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_ldi(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    sti(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_sti(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    fork(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_fork(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    lld(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_lld(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    lldi(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_lldi(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    lfork(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_lfork(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 
-t_bool    aff(t_arg_type *argvt, t_byte **argv, t_bool *carry)
+t_bool    ft_aff(t_arg_type *argvt, t_byte **argv, t_bool *carry)
 {
 
+    return true;
 }
 

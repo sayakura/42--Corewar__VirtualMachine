@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/20 17:22:00 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/20 17:30:53 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,6 @@
 #define REGISTER_TYPE 0b01000000
 #define DIRECT_TYPE 0b10000000
 
-typedef uint8_t t_bool;
-typedef uint8_t t_byte;
-typedef uint32_t t_word;
 typedef t_bool(*t_instr_hdlr)(t_arg_type *, t_byte **, t_bool *);
 
 enum e_process_state
@@ -53,8 +50,8 @@ typedef struct		s_op
 	char			opcode;
 	uint32_t		cycles;
 	char			*des;
-	bool			coding_byte;
-	bool			direct;
+	t_bool			coding_byte;
+	t_bool			direct;
 }					t_op;
 
 

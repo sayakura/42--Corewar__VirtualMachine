@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/18 03:14:40 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/20 17:58:30 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void    init_process(t_vm *vm, void * pc, uint8_t index)
     process->pid = index;
     process->registers[0] = vm->nplayers;
     process->state = CREATE;
+    printf("initing process! %d\n", index);
     if (vm->process_list == NULL)
         vm->process_list = process;
     else 

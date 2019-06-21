@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/20 17:19:33 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/20 18:05:12 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ t_byte    *addr(t_byte *cur, off_t offset)
 // t->direct = g_op_tab[t->opcode].direct;
 
 
-// bool    load_pc(t_byte *pc, t_task *t)
+// t_bool    load_pc(t_byte *pc, t_task *t)
 // {
 //     t_byte     i;
 //     t_byte     acb;
@@ -79,7 +79,7 @@ t_byte    *addr(t_byte *cur, off_t offset)
 
 
 
-void    excute(t_byte instr, t_arg_type *argvt, t_byte **argv, uint8_t *carry)
+void    execute(t_byte instr, t_arg_type *argvt, t_byte **argv, uint8_t *carry)
 {
     (instr_funptr[instr])(argvt, argv, carry);
     printf("running... %d\n", instr);
@@ -101,15 +101,15 @@ void    fetch_decode(t_byte **pc, t_arg_type *argvt, t_byte **argv)
     i = ITERATOR;
     bcode = **pc;
     acb = *(*pc = addr(*pc , 1));
-    while (INC(i) < g_op_tab[bcode].argc)
+    while (INC(i) < g_op_tab[bcode - 1].argc)
     {
         argv[i] = *pc;
-        if (acb & 0b1100000 == REGISTER_TYPE)
+        if ((acb & 0b1100000) == REGISTER_TYPE)
         {
             *pc = addr(*pc, REG_SIZE);
             argvt[i] = T_REG;
         }
-		else if (acb & 0b1100000 == DIRECT_TYPE)
+		else if ((acb & 0b1100000) == DIRECT_TYPE)
 		{
             *pc = addr(*pc, DIR_SIZE);
             argvt[i] = T_DIR;
@@ -138,13 +138,13 @@ void    instruction_cycle(t_byte   **pc)
 void    process_loop(t_vm   *vm)
 {
     t_process *cp;
-    static uint32_t r_cycles[MAX_PLAYERS];
+    static uint32_t r_cycles[MAX_PLAYERS + 1];
     
     cp = vm->process_list;
     while (cp)
     {
         if (!r_cycles[cp->pid])
-            r_cycles[cp->pid] = g_op_tab[*(cp->pc)].cycles;
+            r_cycles[cp->pid] = g_op_tab[*(cp->pc) - 1].cycles;
         r_cycles[cp->pid]--;
         if (!r_cycles[cp->pid])
         {
@@ -154,3 +154,11 @@ void    process_loop(t_vm   *vm)
         cp = cp->next;
     }
 }
+
+// .name "zork"
+// .comment "just a basic living prog"
+		
+// l2:	sti	r1,%:live,%0
+// 	and	r1,%0,r1
+// live:	live	%1
+// 	zjmp	%:live
