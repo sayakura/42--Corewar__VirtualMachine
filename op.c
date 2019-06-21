@@ -6,12 +6,19 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/10/04 11:43:01 by zaz               #+#    #+#             */
-/*   Updated: 2019/06/19 07:17:18 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/21 09:08:08 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "op.h"
 #include "vm.h"
+
+/*
+** 00b = Invalid
+** 01b = Register 		4 bytes
+** 10b = Direct value   4 bytes
+** 11b = Indirect value 2 bytes
+*/
 
 t_op    g_op_tab[17] =
 {
@@ -39,3 +46,24 @@ t_op    g_op_tab[17] =
 	{"aff", 1, {T_REG}, 16, 2, "aff", 1, 0},
 	{0, 0, {0}, 0, 0, 0, 0, 0}
 };
+
+
+/*
+bcode   acb		register	direct 			direct 
+0b    	68		01			00 0f			00 00
+
+
+	01 10 01 00
+	r  d  r 
+and    r1,	%0, 		r1
+06  64 01	00 00 00 00 01
+
+sti			r1,	r1, %11
+0b		58	01	01	00 0b
+
+bcode 	acb 	register 	
+06		64		01			00 00 00 00		01
+
+01		01		00 00 00 01 
+09 ff fb
+*/

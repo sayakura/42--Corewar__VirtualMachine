@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/20 18:05:12 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/21 10:25:38 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,22 +101,26 @@ void    fetch_decode(t_byte **pc, t_arg_type *argvt, t_byte **argv)
     i = ITERATOR;
     bcode = **pc;
     acb = *(*pc = addr(*pc , 1));
+    printf("acb: %x \n", acb);
+    *pc = addr(*pc , 1);
     while (INC(i) < g_op_tab[bcode - 1].argc)
     {
-        argv[i] = *pc;
-        if ((acb & 0b1100000) == REGISTER_TYPE)
+        if ((acb & 0b11000000) == REGISTER_TYPE)
         {
-            *pc = addr(*pc, REG_SIZE);
+            printf("advanced %d [%x]\n", T_REG, **pc);
+            *pc = addr(*pc, T_REG);
             argvt[i] = T_REG;
         }
-		else if ((acb & 0b1100000) == DIRECT_TYPE)
+		else if ((acb & 0b11000000) == DIRECT_TYPE)
 		{
-            *pc = addr(*pc, DIR_SIZE);
+            printf("advanced %d [%x]\n", DIR_SIZE, **pc);
+            *pc = addr(*pc, T_DIR);
             argvt[i] = T_DIR;
         }
 		else
 		{
-            *pc = addr(*pc, IND_SIZE);
+            printf("advanced %d [%x]\n", T_IND, **pc);
+            *pc = addr(*pc, T_IND);
             argvt[i] = T_IND;
         }
         acb <<= 2;
