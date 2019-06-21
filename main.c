@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/19 06:22:41 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/20 17:21:34 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,14 @@ void    run(t_vm *vm)
         ++vm->corewar.cycle;
         // if (++vm->corewar.cycle > vm->corewar.dump_cycle)
         //     print_mem(vm);
-        run_process(vm);
+        process_loop(vm);
         if (vm->corewar.cycle > vm->corewar.kill_cycle)
             printf("start killing!\n");
         if (!vm->nprocess)
             ERROR("some one win!");
         // gui shit
+        if (vm->corewar.cycle > 10000)
+            break ;
     }
 }
 

@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/20 17:18:32 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/20 17:22:00 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,5 +128,8 @@ void    		print_mem(t_vm *vm);
 void			bzero_(void *rsi, size_t rcx);
 //loader
 void    		loader(t_vm *vm, char *filename);
+
+//process
+void    		process_loop(t_vm   *vm);
 
 #endif
