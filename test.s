@@ -1,6 +1,10 @@
- .name "zork"
- .comment "just a basic living prog"
+;basic.s
 
-sti r1,r1, %1001
-and r1, r2, r1
-and r1, %0, r1
+.name		"basic"
+.comment	"this is a basic stuff"
+
+loop:
+	st r1, 6
+	live %0
+	ld %0, r2
+	zjmp %:loop

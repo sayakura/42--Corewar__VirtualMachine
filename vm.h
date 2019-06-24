@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/20 17:30:53 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/23 22:55:40 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct		s_op
 	uint32_t		cycles;
 	char			*des;
 	t_bool			coding_byte;
-	t_bool			direct;
+	t_bool			truncate;
 }					t_op;
 
 

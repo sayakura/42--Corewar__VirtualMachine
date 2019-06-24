@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/21 10:25:38 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/23 23:20:00 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,36 +92,65 @@ void    execute(t_byte instr, t_arg_type *argvt, t_byte **argv, uint8_t *carry)
 ** acb = argument's coding byte
 */
 
-void    fetch_decode(t_byte **pc, t_arg_type *argvt, t_byte **argv)
+void    decode_without_acb(t_byte **pc, t_arg_type *argvt, t_byte **argv,  t_op *op)
 {
-    t_byte         bcode;
     t_byte         acb;
     uint8_t        i;
 
+    printf("without!\n");
     i = ITERATOR;
-    bcode = **pc;
-    acb = *(*pc = addr(*pc , 1));
-    printf("acb: %x \n", acb);
     *pc = addr(*pc , 1);
-    while (INC(i) < g_op_tab[bcode - 1].argc)
+    while (INC(i) < op->argc)
+    {
+        if (op->argvt[i] & T_DIR)
+        {
+            *pc = addr(*pc, DIR_SIZE);
+        }
+        else if (op->argvt[i] & T_REG)
+        {
+            *pc = addr(*pc, REG_SIZE);
+        }
+        else if (op->argvt[i] & T_IND)
+        {
+            *pc = addr(*pc, IND_SIZE);
+        }
+        printf("at [%x]\n", **pc);
+    }
+}
+
+void    decode_with_acb(t_byte **pc, t_arg_type *argvt, t_byte **argv, t_op *op)
+{
+    t_byte         acb;
+    uint8_t        i;
+
+    printf("with!\n");
+    i = ITERATOR;
+    acb = *(*pc = addr(*pc , 1));
+    *pc = addr(*pc , 1);
+    printf("acb: %x \n", acb);
+    while (INC(i) < op->argc)
     {
         if ((acb & 0b11000000) == REGISTER_TYPE)
         {
-            printf("advanced %d [%x]\n", T_REG, **pc);
-            *pc = addr(*pc, T_REG);
-            argvt[i] = T_REG;
+            printf("advanced %d [%x]\n", 1, **pc);
+            *pc = addr(*pc, 1);
         }
 		else if ((acb & 0b11000000) == DIRECT_TYPE)
 		{
-            printf("advanced %d [%x]\n", DIR_SIZE, **pc);
-            *pc = addr(*pc, T_DIR);
-            argvt[i] = T_DIR;
+            if (op->truncate)
+            {
+                printf("advanced %d [%x]\n", DIR_SIZE >> 2, **pc);
+                *pc = addr(*pc, DIR_SIZE >> 2);
+            } else 
+            {
+                printf("advanced %d [%x]\n", DIR_SIZE, **pc);
+                *pc = addr(*pc, DIR_SIZE);
+            }
         }
 		else
 		{
-            printf("advanced %d [%x]\n", T_IND, **pc);
-            *pc = addr(*pc, T_IND);
-            argvt[i] = T_IND;
+            printf("advanced %d [%x]\n", IND_SIZE, **pc);
+            *pc = addr(*pc, 5);
         }
         acb <<= 2;
     }
@@ -130,12 +159,17 @@ void    fetch_decode(t_byte **pc, t_arg_type *argvt, t_byte **argv)
 void    instruction_cycle(t_byte   **pc)
 {
     t_byte              instr;
+    t_op                *op;
     static t_arg_type   argvt[MAX_ARGS_NUMBER];
     static t_byte       *argv[MAX_ARGS_NUMBER];
     static t_bool       carry;
     
     instr = **pc;
-    fetch_decode(pc, argvt, argv);
+    op = &g_op_tab[instr];
+    if (op->coding_byte)
+        decode_with_acb(pc, argvt, argv, op);
+    else
+        decode_without_acb(pc, argvt, argv, op);
     execute(instr, argvt, argv, &carry);
 }
 
@@ -147,6 +181,7 @@ void    process_loop(t_vm   *vm)
     cp = vm->process_list;
     while (cp)
     {
+        printf("run!");
         if (!r_cycles[cp->pid])
             r_cycles[cp->pid] = g_op_tab[*(cp->pc) - 1].cycles;
         r_cycles[cp->pid]--;
