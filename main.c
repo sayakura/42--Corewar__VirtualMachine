@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/24 09:23:17 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/24 11:32:27 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int     main(int ac, char **av)
     t_vm vm;
     
     bzero_(&vm, sizeof(t_vm));
-    vm.nplayers = ac - 1;
+    vm.corewar.nplayers = ac - 1;
     g_base = vm.memory;
     setbuf(stdout, NULL);
     if (ac < 2)

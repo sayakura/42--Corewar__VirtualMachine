@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/20 17:58:30 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/24 11:32:22 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,12 @@ void    init_process(t_vm *vm, void * pc, uint8_t index)
     bzero_(process, sizeof(t_process));
     process->pc = pc;
     process->pid = index;
-    process->registers[0] = vm->nplayers;
+    process->registers[0] = vm->corewar.nplayers;
     process->state = CREATE;
-    printf("initing process! %d\n", index);
-    if (vm->process_list == NULL)
-        vm->process_list = process;
-    else 
-    {
-        while (vm->process_list->next)
-            vm->process_list = vm->process_list->next;
-        vm->process_list->next = process;
-    }
+    printf("initing... pid: %d\n", index);
+    if (vm->process_list)
+        process->next = vm->process_list;
+    vm->process_list = process;
     vm->nprocess++;
 }
 
@@ -47,7 +42,7 @@ void    load_champ(t_vm *vm, int fd)
     champ = &(vm->corewar.champions[++index]);
 	memcpy_(champ->name, hdr.prog_name, PROG_NAME_LENGTH);
 	memcpy_(champ->comment, hdr.comment, COMMENT_LENGTH);
-	pc = &vm->memory[(MEM_SIZE / vm->nplayers) * (index - 1)];
+	pc = &vm->memory[(MEM_SIZE / vm->corewar.nplayers) * (index - 1)];
     printf("program size: %d\n",  hdr.prog_size);
 	if (read(fd, pc, hdr.prog_size) != hdr.prog_size)
 		PERROR("read");
@@ -57,8 +52,8 @@ void    load_champ(t_vm *vm, int fd)
 
 void    print_mem(t_vm *vm)
 {
-    int         i;
-    unsigned    siz;
+    int                 i;
+    unsigned            siz;
 
     i = 0;
     siz = (unsigned)sqrt(MEM_SIZE);

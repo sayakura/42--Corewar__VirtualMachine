@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/24 10:08:52 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/24 11:33:01 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 #define DIRECT_TYPE 0b10000000
 #define GET_ACB_TYPE(acb) (acb & 0b11000000)
 
-typedef t_bool(*t_instr_hdlr)(t_byte *, t_byte **, t_bool *);
 
 enum e_process_state
 {
@@ -96,6 +95,7 @@ typedef struct      s_cw
 	uint32_t		cycle;
 	t_champ			champions[MAX_PLAYERS];
 	uint8_t			ownership[MEM_SIZE];
+    uint8_t         nplayers;
 	uint32_t		dump_cycle;
 	uint32_t 		kill_cycle;
 }                   t_cw;
@@ -109,9 +109,10 @@ typedef struct      s_vm
 	uint8_t			memory[MEM_SIZE];
     t_process       *process_list;
 	uint8_t			nprocess;
-    uint8_t         nplayers;
     t_cw            corewar;
 }                   t_vm;
+
+typedef t_bool(*t_instr_hdlr)(t_vm *, t_byte *, t_byte **, t_bool *);
 
 extern t_op g_op_tab[17];
 extern uint8_t	*g_base;
