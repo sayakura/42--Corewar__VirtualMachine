@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/23 22:55:40 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/24 10:08:52 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,14 @@
 
 #define ITERATOR -1
 #define INC(num) (++num)
-#define EDI_TYPE (acb) (acb & 0b11000000)
-#define ESI_TYPE (acb) (acb & 0b00110000)
-#define ECX_TYPE (acb) (acb & 0b00001100)
+// #define EDI_TYPE (acb) (acb & 0b11000000)
+// #define ESI_TYPE (acb) (acb & 0b00110000)
+// #define ECX_TYPE (acb) (acb & 0b00001100)
 #define REGISTER_TYPE 0b01000000
 #define DIRECT_TYPE 0b10000000
+#define GET_ACB_TYPE(acb) (acb & 0b11000000)
 
-typedef t_bool(*t_instr_hdlr)(t_arg_type *, t_byte **, t_bool *);
+typedef t_bool(*t_instr_hdlr)(t_byte *, t_byte **, t_bool *);
 
 enum e_process_state
 {

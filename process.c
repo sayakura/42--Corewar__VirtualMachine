@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/23 23:20:00 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/24 10:09:41 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,27 @@ static t_instr_hdlr instr_funptr[] = {
     ft_aff
 };
 
-t_byte    *addr(t_byte *cur, off_t offset)
+// t_byte    *addr(t_byte *cur, off_t offset)
+// {
+//     t_byte *end;
+//     off_t   diff;
+
+//     end = g_base + MEM_SIZE;
+//     if ((diff = ((cur += offset) - end)) > 0)
+//         return (g_base + diff);
+//     else
+//         return (cur);
+// }
+
+t_byte  *advance_pc(t_byte **cur, off_t offset)
 {
     t_byte *end;
     off_t   diff;
 
     end = g_base + MEM_SIZE;
-    if ((diff = ((cur += offset) - end)) > 0)
-        return (g_base + diff);
-    else
-        return (cur);
+    if ((diff = ((*cur += offset) - end)) > 0)
+        *cur = g_base + diff;
+    return (*cur);
 }
 
 // t->coding_byte = g_op_tab[t->opcode].coding_byte;
@@ -77,12 +88,10 @@ t_byte    *addr(t_byte *cur, off_t offset)
 // }
 
 
-
-
-void    execute(t_byte instr, t_arg_type *argvt, t_byte **argv, uint8_t *carry)
+void    execute(t_byte instr, t_byte *argvt, t_byte **argv, uint8_t *carry)
 {
     (instr_funptr[instr])(argvt, argv, carry);
-    printf("running... %d\n", instr);
+    printf("running... %s\n", g_op_tab[instr - 1].name);
 }
 
 /*
@@ -92,66 +101,48 @@ void    execute(t_byte instr, t_arg_type *argvt, t_byte **argv, uint8_t *carry)
 ** acb = argument's coding byte
 */
 
-void    decode_without_acb(t_byte **pc, t_arg_type *argvt, t_byte **argv,  t_op *op)
+void    decode_without_acb(t_byte **pc, t_byte *argvt, t_byte **argv,  t_op *op)
 {
     t_byte         acb;
     uint8_t        i;
 
-    printf("without!\n");
     i = ITERATOR;
-    *pc = addr(*pc , 1);
+    advance_pc(pc, 1);
     while (INC(i) < op->argc)
     {
+        argv[i] = *pc;
         if (op->argvt[i] & T_DIR)
-        {
-            *pc = addr(*pc, DIR_SIZE);
-        }
+            advance_pc(pc, DIR_SIZE);
         else if (op->argvt[i] & T_REG)
-        {
-            *pc = addr(*pc, REG_SIZE);
-        }
+            advance_pc(pc, REG_SIZE);
         else if (op->argvt[i] & T_IND)
-        {
-            *pc = addr(*pc, IND_SIZE);
-        }
-        printf("at [%x]\n", **pc);
+            advance_pc(pc, IND_SIZE);
     }
 }
 
-void    decode_with_acb(t_byte **pc, t_arg_type *argvt, t_byte **argv, t_op *op)
+void    decode_with_acb(t_byte **pc, t_byte *argvt, t_byte **argv, t_op *op)
 {
     t_byte         acb;
     uint8_t        i;
 
-    printf("with!\n");
     i = ITERATOR;
-    acb = *(*pc = addr(*pc , 1));
-    *pc = addr(*pc , 1);
-    printf("acb: %x \n", acb);
+    acb = *(advance_pc(pc, 1));
+    advance_pc(pc, 1);
     while (INC(i) < op->argc)
     {
-        if ((acb & 0b11000000) == REGISTER_TYPE)
-        {
-            printf("advanced %d [%x]\n", 1, **pc);
+        argv[i] = *pc;
+        argvt[i] = GET_ACB_TYPE(acb);
+        if (argvt[i] == REGISTER_TYPE)
             *pc = addr(*pc, 1);
-        }
-		else if ((acb & 0b11000000) == DIRECT_TYPE)
+		else if (argvt[i] == DIRECT_TYPE)
 		{
             if (op->truncate)
-            {
-                printf("advanced %d [%x]\n", DIR_SIZE >> 2, **pc);
-                *pc = addr(*pc, DIR_SIZE >> 2);
-            } else 
-            {
-                printf("advanced %d [%x]\n", DIR_SIZE, **pc);
-                *pc = addr(*pc, DIR_SIZE);
-            }
+                advance_pc(pc, DIR_SIZE >> 2);
+            else 
+                advance_pc(pc, DIR_SIZE);
         }
 		else
-		{
-            printf("advanced %d [%x]\n", IND_SIZE, **pc);
-            *pc = addr(*pc, 5);
-        }
+            advance_pc(pc, IND_SIZE);
         acb <<= 2;
     }
 }
@@ -160,12 +151,12 @@ void    instruction_cycle(t_byte   **pc)
 {
     t_byte              instr;
     t_op                *op;
-    static t_arg_type   argvt[MAX_ARGS_NUMBER];
+    static t_byte       argvt[MAX_ARGS_NUMBER];
     static t_byte       *argv[MAX_ARGS_NUMBER];
     static t_bool       carry;
-    
+
     instr = **pc;
-    op = &g_op_tab[instr];
+    op = &g_op_tab[instr - 1];
     if (op->coding_byte)
         decode_with_acb(pc, argvt, argv, op);
     else
@@ -175,20 +166,24 @@ void    instruction_cycle(t_byte   **pc)
 
 void    process_loop(t_vm   *vm)
 {
-    t_process *cp;
+    t_process       *cp;
     static uint32_t r_cycles[MAX_PLAYERS + 1];
     
     cp = vm->process_list;
     while (cp)
     {
-        printf("run!");
-        if (!r_cycles[cp->pid])
-            r_cycles[cp->pid] = g_op_tab[*(cp->pc) - 1].cycles;
-        r_cycles[cp->pid]--;
-        if (!r_cycles[cp->pid])
+        if (*(cp->pc) && *(cp->pc) <= 16)
         {
-            instruction_cycle(&cp->pc);
-            r_cycles[cp->pid] = 0;
+            if (!r_cycles[cp->pid])
+                r_cycles[cp->pid] = g_op_tab[*(cp->pc) - 1].cycles;
+            r_cycles[cp->pid]--;
+            if (!r_cycles[cp->pid])
+            {
+                printf("Cycle: %d\n", vm->corewar.cycle);
+                instruction_cycle(&cp->pc);
+                printf("------------------------------------------\n");
+                r_cycles[cp->pid] ^= r_cycles[cp->pid];
+            }
         }
         cp = cp->next;
     }
