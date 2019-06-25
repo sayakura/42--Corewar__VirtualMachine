@@ -3,7 +3,6 @@
 t_bool    ft_live(t_vm *vm, t_byte *argvt, t_byte **argv, t_bool *carry)
 {
     
-    printf("live trigger!\n");
     return true;
 }
 
