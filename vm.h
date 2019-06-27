@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/25 12:27:24 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/26 17:16:41 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,10 @@
 #define REGISTER_TYPE 0b01000000
 #define DIRECT_TYPE 0b10000000
 #define GET_ACB_TYPE(acb) (acb & 0b11000000)
-
+#define FOR_EACH(item, array) typeof(*(array)) *start = array;\
+                            typeof(*(array)) *end = (start + (sizeof(array) / sizeof*(array)) + 1);\
+                            typeof(*(array)) *item;\
+                            while ((item = start) && start++ != end )
 enum e_process_state
 {
 	CREATE,
@@ -70,7 +73,7 @@ typedef struct 		s_task
 
 typedef struct      s_champ
 {
-	int8_t			id;
+	int32_t			id;
 	char			name[PROG_NAME_LENGTH + 1];
 	char			comment[COMMENT_LENGTH + 1];
 	uint32_t		lives;
