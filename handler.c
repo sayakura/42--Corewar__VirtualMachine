@@ -38,9 +38,9 @@ t_bool    ft_st(t_vm *vm, t_process *cp, t_instr *cinstr)
     if (cinstr->argvt[1] == INDIRECT_TYPE)
     {
         READ_FROM_MEM(cinstr->argv[1], (t_byte *)&rdi, IND_SIZE, E_BIG_ENDIAN);             printf("rdi: %d\n", rdi);
-        printf("pc : %p [%x]\n", cinstr->pc, *cinstr->pc);
-        printf("apc : %p [%x]\n", cinstr->pc + (rdi % IDX_MOD), *cinstr->pc + (rdi % IDX_MOD));
-        printf("content : %d\n", cp->registers[i - 1]);
+        // printf("pc : %p [%x]\n", cinstr->pc, *cinstr->pc);
+        // printf("apc : %p [%x]\n", cinstr->pc + (rdi % IDX_MOD), *cinstr->pc + (rdi % IDX_MOD));
+        // printf("content : %d\n", cp->registers[i - 1]);
         WRITE_TO_MEM(cinstr->pc + (rdi % IDX_MOD), (t_byte *)(&cp->registers[i - 1]), REG_SIZE, E_BIG_ENDIAN);
     }
     // if (cinstr->argvt[1] & T_REG)

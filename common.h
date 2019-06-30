@@ -15,7 +15,7 @@
 
 typedef uint8_t t_bool;
 typedef uint8_t t_byte;
-typedef uint32_t t_word;
+typedef int32_t t_word;
 
 //lib	
 void			perror_(const char *s);
