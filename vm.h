@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/26 17:16:41 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/30 00:02:20 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,28 @@
 // #define ECX_TYPE (acb) (acb & 0b00001100)
 #define REGISTER_TYPE 0b01000000
 #define DIRECT_TYPE 0b10000000
+#define INDIRECT_TYPE 0b11000000
 #define GET_ACB_TYPE(acb) (acb & 0b11000000)
 #define FOR_EACH(item, array) typeof(*(array)) *start = array;\
                             typeof(*(array)) *end = (start + (sizeof(array) / sizeof*(array)) + 1);\
                             typeof(*(array)) *item;\
                             while ((item = start) && start++ != end )
-enum e_process_state
+
+# define READ_FROM_MEM(a, b, c, d) mem_oper(READ, b, a, c); if (d) rev_bytes(b, c);
+
+# define WRITE_TO_MEM(a, b, c, d) mem_oper(WRITE, a, b, c); if (d) rev_bytes(a, c);
+
+typedef enum e_endianess
 {
-	CREATE,
-	RUNNING,
-	WAITING,
-	TERMINATED
-};
+	E_LITTLE_ENDIAN,
+	E_BIG_ENDIAN
+}			t_endianess;
+
+typedef enum e_mem_op
+{
+	READ,
+	WRITE
+}			t_mem_op;
 
 // typedef struct 		s_cpu
 // {
@@ -117,7 +127,17 @@ typedef struct      s_vm
     t_cw            corewar;
 }                   t_vm;
 
-typedef t_bool(*t_instr_hdlr)(t_vm *, t_byte *, t_byte **, t_bool *);
+typedef struct 		s_instr
+{
+	t_byte 			*pc;
+	t_byte			instr;
+	t_byte 			argc;
+	t_byte			*argv[MAX_ARGS_NUMBER];
+	t_byte			argvt[MAX_ARGS_NUMBER];
+	t_bool			carry;
+}					t_instr;
+
+typedef t_bool(*t_instr_hdlr)(t_vm *, t_process *, t_instr *);
 
 extern t_op g_op_tab[17];
 extern uint8_t	*g_base;
@@ -136,4 +156,12 @@ void    		loader(t_vm *vm, char *filename);
 //process
 void    		process_loop(t_vm   *vm);
 
+
+// champion
+t_champ			*search_champion(t_vm *vm, int32_t id);
+
+
+// memory 
+
+void 			mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
 #endif

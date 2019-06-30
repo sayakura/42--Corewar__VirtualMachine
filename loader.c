@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/26 14:57:47 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/29 23:47:56 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,13 @@ void    init_process(t_vm *vm, void * pc, uint8_t pid)
 {
     t_process           *process;
 
+    pid = 77;
     process = malloc(sizeof(t_process));
     bzero_(process, sizeof(t_process));
     process->pc = pc;
     process->pid = pid;
     process->registers[0] = pid;
-    process->state = CREATE;
+    //process->state = CREATE;
     printf("initing... pid: %d\n", pid);
     if (vm->process_list)
         process->next = vm->process_list;
@@ -58,7 +59,7 @@ void    print_mem(t_vm *vm)
 
     i = 0;
     siz = (unsigned)sqrt(MEM_SIZE);
-    while (i < MEM_SIZE)
+    while (i < 100)
     {
         if (i % siz == 0)
             printf("\n");

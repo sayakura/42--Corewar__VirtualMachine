@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/24 11:31:06 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/29 23:46:59 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,10 @@ t_byte  *advance_pc(t_byte **cur, off_t offset)
     return (*cur);
 }
 
-void    execute(t_vm *vm, t_byte instr, t_byte *argvt,\
-                            t_byte **argv, uint8_t *carry)
+void    execute(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    (instr_funptr[instr - 1])(vm, argvt, argv, carry);
-    printf("Running... %s\n", g_op_tab[instr - 1].name);
+    (instr_funptr[cinstr->instr - 1])(vm, cp, cinstr);
+    //printf("Running... %s\n", g_op_tab[instr - 1].name);
 }
 
 /*
@@ -55,6 +54,7 @@ void    execute(t_vm *vm, t_byte instr, t_byte *argvt,\
 ** pc = program counter / instruction pointer
 ** acb = argument's coding byte
 */
+
 void    decode_without_acb(t_byte **pc, t_byte *argvt,\
                                 t_byte **argv,  t_op *op)
 {
@@ -82,9 +82,8 @@ void    decode_with_acb(t_byte **pc, t_byte *argvt,\
     uint8_t        i;
 
     i = ITERATOR;
-    acb = *(advance_pc(pc, 1));
-    printf("%x\n", acb);
-    advance_pc(pc, 1);
+    acb = *(advance_pc(pc, 1));             //printf("%x\n", acb);
+    advance_pc(pc, 1);  
     while (INC(i) < op->argc)
     {
         argv[i] = *pc;
@@ -104,21 +103,20 @@ void    decode_with_acb(t_byte **pc, t_byte *argvt,\
     }
 }
 
-void    instruction_cycle(t_vm *vm, t_byte **pc)
+void    instruction_cycle(t_vm *vm, t_process *cp)
 {
-    t_byte          instr;
-    t_op            *op;
-    static t_byte   argvt[MAX_ARGS_NUMBER];
-    static t_byte   *argv[MAX_ARGS_NUMBER];
-    static t_bool   carry;
-
-    instr = **pc;
-    op = &g_op_tab[instr - 1];
+    t_op                *op;
+    static t_instr      i;
+    
+    i.instr = *cp->pc;
+    i.pc = cp->pc;
+    op = &g_op_tab[i.instr - 1];
+    i.argc = op->argc;
     if (op->coding_byte)
-        decode_with_acb(pc, argvt, argv, op);
+        decode_with_acb(&cp->pc, i.argvt, i.argv, op);
     else
-        decode_without_acb(pc, argvt, argv, op);
-    execute(vm, instr, argvt, argv, &carry);
+        decode_without_acb(&cp->pc, i.argvt, i.argv, op);
+    execute(vm, cp, &i);
 }
 
 void    process_loop(t_vm   *vm)
@@ -138,7 +136,7 @@ void    process_loop(t_vm   *vm)
             {
                 printf("Pid: %d\n", cp->pid);
                 printf("Cycle: %d\n", vm->corewar.cycle);
-                instruction_cycle(vm, &cp->pc);
+                instruction_cycle(vm, cp);
                 printf("---------------\n");
                 r_cycles[cp->pid] ^= r_cycles[cp->pid];
             }
