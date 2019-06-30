@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/30 00:07:14 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/30 15:10:49 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void    init_process(t_vm *vm, void * pc)
     bzero_(process, sizeof(t_process));
     process->pc = pc;
     process->pid = pid;
-    process->registers[0] = pid;
+    process->registers[1] = pid;
     //process->state = CREATE;
     printf("initing... pid: %d\n", pid);
     pid++;
@@ -41,9 +41,10 @@ void    load_champ(t_vm *vm, int fd)
     void                *pc;
 
     parse_champ_header(&hdr, fd);
-    champ = &(vm->corewar.champions[index + 1]);
+    champ = &(vm->corewar.champions[index]);
 	memcpy_(champ->name, hdr.prog_name, PROG_NAME_LENGTH);
 	memcpy_(champ->comment, hdr.comment, COMMENT_LENGTH);
+    champ->id = index - 1;
 	pc = &vm->memory[(MEM_SIZE / vm->corewar.nplayers) * index];
     printf("program size: %d\n",  hdr.prog_size);
 	if (read(fd, pc, hdr.prog_size) != hdr.prog_size)
@@ -60,10 +61,14 @@ void    print_mem(t_vm *vm)
 
     i = 0;
     siz = (unsigned)sqrt(MEM_SIZE);
-    while (i < 100)
+    while (i < 100) // < MEM_SZIE
     {
         if (i % siz == 0)
-            printf("\n");
+        {
+            if (i)
+                printf("\n");
+            printf("%#06x : ", i);
+        }
         puthex(vm->memory[i]);
         printf(" ");
         i++;

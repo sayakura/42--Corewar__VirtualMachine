@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/30 00:02:20 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/30 13:45:25 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 
 #define ITERATOR -1
 #define INC(num) (++num)
+#define ONEBYTE 1
 // #define EDI_TYPE (acb) (acb & 0b11000000)
 // #define ESI_TYPE (acb) (acb & 0b00110000)
 // #define ECX_TYPE (acb) (acb & 0b00001100)
@@ -32,14 +33,20 @@
                             typeof(*(array)) *item;\
                             while ((item = start) && start++ != end )
 
-# define READ_FROM_MEM(a, b, c, d) mem_oper(READ, b, a, c); if (d) rev_bytes(b, c);
+# define READ_FROM_MEM(a, b, c, d) mem_oper(READ, (t_byte *)b, a, c); if (d) rev_bytes(b, c);
+# define WRITE_TO_MEM(a, b, c, d) mem_oper(WRITE, a, (t_byte *)b, c); if (d) rev_bytes(a, c);
+# define READ_(i, b, c)  READ_FROM_MEM(i, b, c, BIG_E);
+# define WRITE_(i, b, c)  WRITE_TO_MEM(i, b, c, BIG_E);
 
-# define WRITE_TO_MEM(a, b, c, d) mem_oper(WRITE, a, b, c); if (d) rev_bytes(a, c);
+# define MEM_POS()
+
+# define REL(pc, offset) pc + (offset % IDX_MOD)
+# define LOG printf
 
 typedef enum e_endianess
 {
-	E_LITTLE_ENDIAN,
-	E_BIG_ENDIAN
+	LITTLE_E,
+	BIG_E
 }			t_endianess;
 
 typedef enum e_mem_op
@@ -93,11 +100,11 @@ typedef struct      s_champ
 
 typedef struct      	s_process
 {
-    t_word         		registers[REG_NUMBER];
+    t_word         		registers[REG_NUMBER + 1];
     int             	state;
     t_byte            	*pc;
 	t_byte				*ip;
-    uint8_t         	pid;
+    int32_t         	pid;
     int8_t          	carry : 1;
 	t_task				cur_task;
 	uint16_t			remaining_cycle;
@@ -137,7 +144,7 @@ typedef struct 		s_instr
 	t_bool			carry;
 }					t_instr;
 
-typedef t_bool(*t_instr_hdlr)(t_vm *, t_process *, t_instr *);
+typedef void(*t_instr_hdlr)(t_vm *, t_process *, t_instr *);
 
 extern t_op g_op_tab[17];
 extern uint8_t	*g_base;
@@ -164,4 +171,6 @@ t_champ			*search_champion(t_vm *vm, int32_t id);
 // memory 
 
 void 			mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
+void    		read_m(void *fd, void *buff, unsigned int size);
+void    		write_m(void *fd, void *buff, unsigned int size);
 #endif

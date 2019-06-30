@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 20:01:05 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/29 23:24:00 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/06/30 15:07:03 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,23 @@ void    mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt)
     }
 }
 
+void    read_m(void *fd, void *buff, unsigned int size)
+{
+    mem_oper(READ, (t_byte *)buff, (t_byte *)fd, size);
+    rev_bytes(buff, size);
+}
+
+void    write_m(void *fd, void *buff, unsigned int size)
+{
+    mem_oper(WRITE, (t_byte *)fd, (t_byte *)buff, size);
+    rev_bytes(fd, size);
+}
+
 // void    read_from_mem(t_byte *where, void *buff, uint8_t howmany,\
 //                                             t_endianess endianess)
 // {
 //     mem_oper(READ, buff, where, howmany);
-//     if (endianess == E_BIG_ENDIAN)
+//     if (endianess == BIG_E)
 //         rev_bytes(buff, howmany);
 // }
 
@@ -57,7 +69,7 @@ void    mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt)
 //                                             t_endianess endianess)
 // {
 //     mem_oper(WRITE, to, buff, howmany);
-//     if (endianess == E_BIG_ENDIAN)
+//     if (endianess == BIG_E)
 //         rev_bytes(to, howmany);
 // }
 
@@ -74,5 +86,5 @@ void    mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt)
     //         where = g_base;
     //     *ptr++ = *where++;
     // }
-    // if (endianess == E_BIG_ENDIAN)
+    // if (endianess == BIG_E)
     //     rev_bytes(buff, tmp);

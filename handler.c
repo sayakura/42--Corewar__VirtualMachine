@@ -1,20 +1,20 @@
 #include "handler.h"
 
-t_bool    ft_live(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_live(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    t_champ     *champ;
+    t_champ     *champ; printf("[live]\n");
     int32_t     id;
 
-    READ_FROM_MEM(cinstr->argv[0], (t_byte *)&id, REG_SIZE, E_BIG_ENDIAN);            printf("%d\n", id);
+    read_m(cinstr->argv[0], &id, REG_SIZE);                                                       printf("Champion id: %d\n", id);
     champ = search_champion(vm, id);                                                  printf("at cycle: %d\n", vm->corewar.cycle);
     if (!champ)
-        return true;
-    champ->lives++;
+        return ;
+    LOG("Player %d (%s) is said to be alive\n", champ->id + 2, champ->name);
+    champ->lives++; 
     champ->last_live = vm->corewar.cycle;
-    return true;
 }
 
-t_bool    ft_ld(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_ld(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     int8_t      i;                          printf("ld trigger!\n");
 
@@ -22,109 +22,112 @@ t_bool    ft_ld(t_vm *vm, t_process *cp, t_instr *cinstr)
     while (++i < cinstr->argc)
     {
     }
-    return true;
 }
 
-t_bool    ft_st(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_st(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    int8_t      i;                          printf("st trigger!\n");
-    int32_t     reg;
+    int8_t      i; printf("[st]\n");
     int32_t     rdi;
 
     rdi = 0;
-    reg = 0;
-    READ_FROM_MEM(cinstr->argv[0], (t_byte *)&i, 1, E_BIG_ENDIAN);                        printf("i: %d reg: %d\n", i, cp->registers[i]);
-    printf("cinstr->argvt[1]: %d\n", cinstr->argvt[1]);
+    read_m(cinstr->argv[0], &i, 1);
     if (cinstr->argvt[1] == INDIRECT_TYPE)
     {
-        READ_FROM_MEM(cinstr->argv[1], (t_byte *)&rdi, IND_SIZE, E_BIG_ENDIAN);             printf("rdi: %d\n", rdi);
-        // printf("pc : %p [%x]\n", cinstr->pc, *cinstr->pc);
-        // printf("apc : %p [%x]\n", cinstr->pc + (rdi % IDX_MOD), *cinstr->pc + (rdi % IDX_MOD));
-        // printf("content : %d\n", cp->registers[i - 1]);
-        WRITE_TO_MEM(cinstr->pc + (rdi % IDX_MOD), (t_byte *)(&cp->registers[i - 1]), REG_SIZE, E_BIG_ENDIAN);
+        read_m(cinstr->argv[1], &rdi, IND_SIZE);                         printf("First arg (indirect): %d\n", rdi);
+        write_m(REL(cinstr->pc, rdi), &cp->registers[i], REG_SIZE);
     }
-    // if (cinstr->argvt[1] & T_REG)
-    //     WRITE_TO_MEM(cinstr->argv[1], reg, REG_SIZE, E_BIG_ENDIAN);
-    
-    return true;
+    else
+    {
+        read_m(cinstr->argv[1], &rdi, 1);                                printf("First arg (register): %d\n", rdi);
+        cp->registers[rdi] = cp->registers[i];
+    }
 }
 
-t_bool    ft_add(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_add(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("add trigger!\n");
-    return true;
 }
 
-t_bool    ft_sub(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_sub(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("sub trigger!\n");
-    return true;
 }
 
-t_bool    ft_and(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_and(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("and trigger!\n");
-    return true;
 }
 
-t_bool    ft_or(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_or(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("or trigger!\n");
-    return true;
 }
 
-t_bool    ft_xor(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_xor(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("xor trigger!\n");
-    return true;
 }
 
-t_bool    ft_zjmp(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_zjmp(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("zjmp trigger!\n");
-    return true;
 }
 
-t_bool    ft_ldi(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_ldi(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("ldi trigger!\n");
-    return true;
 }
 
-t_bool    ft_sti(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_sti(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("sti trigger!\n");
-    
-    return true;
+    int8_t      i;  printf("[sti]\n");
+    t_byte      *ptr;
+    int32_t     offset;
+
+    offset = 0;
+    read_m(cinstr->argv[0], &i, 1);
+    if (cinstr->argvt[1] == INDIRECT_TYPE) // todo: change this
+        read_m(cinstr->argv[1], &offset, 2);
+    else if (cinstr->argvt[1] == DIRECT_TYPE)
+        read_m(cinstr->argv[1], &offset, 2);
+    else
+    {
+        read_m(cinstr->argv[1], &offset, 1);
+        offset = cp->registers[offset];
+    }
+    ptr = REL(cinstr->pc, offset);
+    if (cinstr->argvt[2] == DIRECT_TYPE)
+        read_m(cinstr->argv[2], &offset, 2);
+    else
+    {
+        read_m(cinstr->argv[2], &offset, 1);
+        offset = cp->registers[offset];
+    }
+    write_m(REL(ptr, offset), &cp->registers[i], DIR_SIZE);
 }
 
-t_bool    ft_fork(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_fork(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("fork trigger!\n");
-    return true;
 }
 
-t_bool    ft_lld(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_lld(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("lld trigger!\n");
-    return true;
 }
 
-t_bool    ft_lldi(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_lldi(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("lldi trigger!\n");
-    return true;
 }
 
-t_bool    ft_lfork(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_lfork(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("lfork trigger!\n");
-    return true;
 }
 
-t_bool    ft_aff(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    ft_aff(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     printf("aff trigger!\n");
-    return true;
 }
 
