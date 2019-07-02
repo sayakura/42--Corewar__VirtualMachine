@@ -51,10 +51,31 @@ void    read_m(void *fd, void *buff, unsigned int size)
     rev_bytes(buff, size);
 }
 
+// void    read_rel(void *fd, void *buff, unsigned int size)
+// {
+//     mem_oper(READ, (t_byte *)buff, (t_byte *)fd, size);
+//     rev_bytes(buff, size);
+// }
+
 void    write_m(void *fd, void *buff, unsigned int size)
 {
     mem_oper(WRITE, (t_byte *)fd, (t_byte *)buff, size);
     rev_bytes(fd, size);
+}
+
+
+void    read_arg(t_instr *cinstr, uint8_t i, int32_t *buff, t_bool truc)
+{
+    *buff = 0;
+    if (cinstr->argvt[i] == INDIRECT_TYPE)
+    {
+        read_m(cinstr->argv[i], buff, 2);
+        read_m(REL(cinstr->pc, *buff), &buff, 4);
+    }
+    else if (cinstr->argvt[i] == DIRECT_TYPE)
+        read_m(cinstr->argv[i], buff, truc ? 2 : 4);
+    else
+        read_m(cinstr->argv[i], buff, 1);
 }
 
 // void    read_from_mem(t_byte *where, void *buff, uint8_t howmany,\

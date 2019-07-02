@@ -6,4 +6,4 @@
 loop:
 	st r1, 6
 	live %7
-	st r1, r2
+;	st r1, r2

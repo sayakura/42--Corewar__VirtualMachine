@@ -5,7 +5,8 @@ void    ft_live(t_vm *vm, t_process *cp, t_instr *cinstr)
     t_champ     *champ; printf("[live]\n");
     int32_t     id;
 
-    read_m(cinstr->argv[0], &id, REG_SIZE);                                                       printf("Champion id: %d\n", id);
+    read_m(cinstr->argv[0], &id, REG_SIZE);
+                                                           printf("Champion id: %d\n", id);
     champ = search_champion(vm, id);                                                  printf("at cycle: %d\n", vm->corewar.cycle);
     if (!champ)
         return ;
@@ -26,21 +27,12 @@ void    ft_ld(t_vm *vm, t_process *cp, t_instr *cinstr)
 
 void    ft_st(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    int8_t      i; printf("[st]\n");
     int32_t     rdi;
+    int32_t     rsi;
 
-    rdi = 0;
-    read_m(cinstr->argv[0], &i, 1);
-    if (cinstr->argvt[1] == INDIRECT_TYPE)
-    {
-        read_m(cinstr->argv[1], &rdi, IND_SIZE);                         printf("First arg (indirect): %d\n", rdi);
-        write_m(REL(cinstr->pc, rdi), &cp->registers[i], REG_SIZE);
-    }
-    else
-    {
-        read_m(cinstr->argv[1], &rdi, 1);                                printf("First arg (register): %d\n", rdi);
-        cp->registers[rdi] = cp->registers[i];
-    }
+    read_arg(cinstr, 0, &rdi, false);
+    read_arg(cinstr, 1, &rsi, false);
+    write_m(REL(cinstr->pc, rsi), &cp->registers[rdi], REG_SIZE);     printf("[sti] argv: [ %d | %d ]\n", rdi, rsi);
 }
 
 void    ft_add(t_vm *vm, t_process *cp, t_instr *cinstr)
@@ -80,30 +72,17 @@ void    ft_ldi(t_vm *vm, t_process *cp, t_instr *cinstr)
 
 void    ft_sti(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    int8_t      i;  printf("[sti]\n");
+    int32_t     rdi;
+    int32_t     rsi;
+    int32_t     rcx;
     t_byte      *ptr;
-    int32_t     offset;
 
-    offset = 0;
-    read_m(cinstr->argv[0], &i, 1);
-    if (cinstr->argvt[1] == INDIRECT_TYPE) // todo: change this
-        read_m(cinstr->argv[1], &offset, 2);
-    else if (cinstr->argvt[1] == DIRECT_TYPE)
-        read_m(cinstr->argv[1], &offset, 2);
-    else
-    {
-        read_m(cinstr->argv[1], &offset, 1);
-        offset = cp->registers[offset];
-    }
-    ptr = REL(cinstr->pc, offset);
-    if (cinstr->argvt[2] == DIRECT_TYPE)
-        read_m(cinstr->argv[2], &offset, 2);
-    else
-    {
-        read_m(cinstr->argv[2], &offset, 1);
-        offset = cp->registers[offset];
-    }
-    write_m(REL(ptr, offset), &cp->registers[i], DIR_SIZE);
+    read_arg(cinstr, 0, &rdi, true);
+    read_arg(cinstr, 1, &rsi, true);
+    read_arg(cinstr, 2, &rcx, true);
+    ptr = REL(cinstr->pc, rsi);
+    write_m(REL(ptr, rcx), &cp->registers[rdi], DIR_SIZE);
+    printf("[sti] argv: [ %d | %d | %d]\n", rdi, rsi, rcx);
 }
 
 void    ft_fork(t_vm *vm, t_process *cp, t_instr *cinstr)

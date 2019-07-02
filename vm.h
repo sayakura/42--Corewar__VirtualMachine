@@ -43,6 +43,14 @@
 # define REL(pc, offset) pc + (offset % IDX_MOD)
 # define LOG printf
 
+typedef union	u_arg
+{
+	int8_t		reg;
+	int16_t		ind;
+	int32_t		dir;	
+}				t_arg;
+
+
 typedef enum e_endianess
 {
 	LITTLE_E,
@@ -173,4 +181,5 @@ t_champ			*search_champion(t_vm *vm, int32_t id);
 void 			mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
 void    		read_m(void *fd, void *buff, unsigned int size);
 void    		write_m(void *fd, void *buff, unsigned int size);
+void    		read_arg(t_instr *cinstr, uint8_t i, int32_t *buff, t_bool truc);
 #endif
