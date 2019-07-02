@@ -17,12 +17,15 @@ void    ft_live(t_vm *vm, t_process *cp, t_instr *cinstr)
 
 void    ft_ld(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    int8_t      i;                          printf("ld trigger!\n");
+    int32_t     rdi;
+    int32_t     rsi;
 
-    i = ITERATOR;
-    while (++i < cinstr->argc)
-    {
-    }
+    read_arg(cinstr, 0, &rdi, false);
+    read_arg(cinstr, 1, &rsi, false);
+    //if (cinstr->argvt[rsi] == INDIRECT_TYPE)
+
+    cp->registers[rsi] = rdi;
+    printf("[ld] argv: [ %d | %d ]\n", rdi, rsi);
 }
 
 void    ft_st(t_vm *vm, t_process *cp, t_instr *cinstr)
@@ -32,7 +35,11 @@ void    ft_st(t_vm *vm, t_process *cp, t_instr *cinstr)
 
     read_arg(cinstr, 0, &rdi, false);
     read_arg(cinstr, 1, &rsi, false);
-    write_m(REL(cinstr->pc, rsi), &cp->registers[rdi], REG_SIZE);     printf("[sti] argv: [ %d | %d ]\n", rdi, rsi);
+    if (cinstr->argvt[1] == INDIRECT_TYPE)
+        write_m(REL(cinstr->pc, rsi), &cp->registers[rdi], REG_SIZE);    
+    else
+        write_m(&cp->registers[rsi], &cp->registers[rdi], REG_SIZE); 
+    printf("[st] argv: [ %d | %d ]\n", rdi, rsi);
 }
 
 void    ft_add(t_vm *vm, t_process *cp, t_instr *cinstr)
@@ -77,11 +84,22 @@ void    ft_sti(t_vm *vm, t_process *cp, t_instr *cinstr)
     int32_t     rcx;
     t_byte      *ptr;
 
+    ptr = cinstr->pc;
     read_arg(cinstr, 0, &rdi, true);
     read_arg(cinstr, 1, &rsi, true);
+    if (cinstr->argvt[1] == REGISTER_TYPE)
+        ptr = REL(ptr,  cp->registers[rsi]);
+    else if (cinstr->argvt[1] == INDIRECT_TYPE)
+    {
+        read_m(REL(ptr, rsi), &rsi, 4);
+        ptr += rsi % IDX_MOD;
+    }
     read_arg(cinstr, 2, &rcx, true);
-    ptr = REL(cinstr->pc, rsi);
-    write_m(REL(ptr, rcx), &cp->registers[rdi], DIR_SIZE);
+    if (cinstr->argvt[2] == REGISTER_TYPE)
+        ptr = REL(ptr,  cp->registers[rcx]);
+    else
+        ptr = REL(ptr, rcx);
+    write_m(ptr, &cp->registers[rdi], 4);
     printf("[sti] argv: [ %d | %d | %d]\n", rdi, rsi, rcx);
 }
 

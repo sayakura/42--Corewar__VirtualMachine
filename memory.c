@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 20:01:05 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/30 15:07:03 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/02 10:47:54 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,7 @@ void    read_arg(t_instr *cinstr, uint8_t i, int32_t *buff, t_bool truc)
 {
     *buff = 0;
     if (cinstr->argvt[i] == INDIRECT_TYPE)
-    {
         read_m(cinstr->argv[i], buff, 2);
-        read_m(REL(cinstr->pc, *buff), &buff, 4);
-    }
     else if (cinstr->argvt[i] == DIRECT_TYPE)
         read_m(cinstr->argv[i], buff, truc ? 2 : 4);
     else
