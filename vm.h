@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/30 13:45:25 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/02 18:27:39 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,22 @@
 # define REL(pc, offset) pc + (offset % IDX_MOD)
 # define LOG printf
 
-typedef union	u_arg
-{
-	int8_t		reg;
-	int16_t		ind;
-	int32_t		dir;	
-}				t_arg;
-
+# define LEA(reg, mem) read_arg(mem, &reg, false);
+# define LD(reg, mem) read_arg(mem, &reg, true);
+# define EDI g_cur_process->registers[0]
+# define ESI g_cur_process->registers[1]
+# define ECX g_cur_process->registers[2]
+# define ADD(reg1, reg2) reg1 += reg2
+# define SUB(reg1, reg2) reg1 -= reg2
+# define AND(reg1, reg2) reg1 &= reg2
+# define OR(reg1, reg2) reg1 |= reg2
+# define XOR(reg1, reg2) reg1 ^= reg2
+# define MOV(r1, r2) write_m(&r1, &r2, 4);
+// # define MOV
+# define PC g_cur_process->cpc
+# define CP g_cur_process
+# define INSTR g_op_tab
+# define REG(i) g_cur_process->registers[i]
 
 typedef enum e_endianess
 {
@@ -111,13 +120,14 @@ typedef struct      	s_process
     t_word         		registers[REG_NUMBER + 1];
     int             	state;
     t_byte            	*pc;
+	t_byte 				*cpc;
 	t_byte				*ip;
     int32_t         	pid;
-    int8_t          	carry : 1;
 	t_task				cur_task;
 	uint16_t			remaining_cycle;
 	t_champ				*champion;
 	struct s_process	*next;
+	t_bool				carry;
 }                   	t_process;
 
 typedef struct      s_cw
@@ -130,9 +140,6 @@ typedef struct      s_cw
 	uint32_t 		kill_cycle;
 }                   t_cw;
 
-typedef struct      s_loader
-{
-}                   t_loader;
 
 typedef struct      s_vm
 {
@@ -142,6 +149,12 @@ typedef struct      s_vm
     t_cw            corewar;
 }                   t_vm;
 
+typedef	struct 		s_arg
+{
+	t_byte			*argv;
+	t_byte			argvt;
+}					t_arg;
+
 typedef struct 		s_instr
 {
 	t_byte 			*pc;
@@ -149,13 +162,17 @@ typedef struct 		s_instr
 	t_byte 			argc;
 	t_byte			*argv[MAX_ARGS_NUMBER];
 	t_byte			argvt[MAX_ARGS_NUMBER];
-	t_bool			carry;
+	t_arg			arg[MAX_ARGS_NUMBER];
+	t_process		*context;
 }					t_instr;
+
 
 typedef void(*t_instr_hdlr)(t_vm *, t_process *, t_instr *);
 
 extern t_op g_op_tab[17];
 extern uint8_t	*g_base;
+extern t_process *g_cur_process;
+
 // parser
 void			parse_champ_header(t_hdr *hdr, int fd);
 
@@ -181,5 +198,5 @@ t_champ			*search_champion(t_vm *vm, int32_t id);
 void 			mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
 void    		read_m(void *fd, void *buff, unsigned int size);
 void    		write_m(void *fd, void *buff, unsigned int size);
-void    		read_arg(t_instr *cinstr, uint8_t i, int32_t *buff, t_bool truc);
+void    		read_arg(t_arg *arg, int32_t *buff, t_bool addressing);
 #endif

@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/29 23:46:59 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/02 18:16:20 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,7 @@ void    execute(t_vm *vm, t_process *cp, t_instr *cinstr)
 ** acb = argument's coding byte
 */
 
-void    decode_without_acb(t_byte **pc, t_byte *argvt,\
-                                t_byte **argv,  t_op *op)
+void    decode_without_acb(t_byte **pc, t_arg *arg,  t_op *op)
 {
     t_byte         acb;
     uint8_t        i;
@@ -65,7 +64,7 @@ void    decode_without_acb(t_byte **pc, t_byte *argvt,\
     advance_pc(pc, 1);
     while (INC(i) < op->argc)
     {
-        argv[i] = *pc;
+        arg[i].argv = *pc;
         if (op->argvt[i] & T_DIR)
             advance_pc(pc, DIR_SIZE);
         else if (op->argvt[i] & T_REG)
@@ -75,8 +74,7 @@ void    decode_without_acb(t_byte **pc, t_byte *argvt,\
     }
 }
 
-void    decode_with_acb(t_byte **pc, t_byte *argvt,\
-                                t_byte **argv, t_op *op)
+void    decode_with_acb(t_byte **pc, t_arg *arg, t_op *op)
 {
     t_byte         acb;
     uint8_t        i;
@@ -86,11 +84,11 @@ void    decode_with_acb(t_byte **pc, t_byte *argvt,\
     advance_pc(pc, 1);  
     while (INC(i) < op->argc)
     {
-        argv[i] = *pc;
-        argvt[i] = GET_ACB_TYPE(acb);
-        if (argvt[i] == REGISTER_TYPE)
+        arg[i].argv = *pc;
+        arg[i].argvt = GET_ACB_TYPE(acb);
+        if (arg[i].argvt == REGISTER_TYPE)
             advance_pc(pc, 1);
-		else if (argvt[i] == DIRECT_TYPE)
+		else if (arg[i].argvt == DIRECT_TYPE)
 		{
             if (op->truncate)
                 advance_pc(pc, DIR_SIZE >> 1);
@@ -109,14 +107,21 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
     static t_instr      i;
     
     i.instr = *cp->pc;
-    i.pc = cp->pc;
-    op = &g_op_tab[i.instr - 1];
+    //cp->cpc = cp->pc;
+
+    cp->cpc = i.pc = cp->pc;
+    op = &INSTR[i.instr - 1];
     i.argc = op->argc;
+    //printf("%p\n" , cp->cpc);
     if (op->coding_byte)
-        decode_with_acb(&cp->pc, i.argvt, i.argv, op);
+        decode_with_acb(&cp->pc, i.arg, op);
     else
-        decode_without_acb(&cp->pc, i.argvt, i.argv, op);
+        decode_without_acb(&cp->pc, i.arg, op);
+    g_cur_process = cp;
+
     execute(vm, cp, &i);
+    //printf("%p\n", cp->pc);
+    print_mem(vm);
 }
 
 void    process_loop(t_vm   *vm)
@@ -127,18 +132,20 @@ void    process_loop(t_vm   *vm)
     cp = vm->process_list;
     while (cp)
     {
+        //printf("current cycle: %d l: %d, %d\n", vm->corewar.cycle, r_cycles[cp->pid + 1], *(cp->pc));
         if (*(cp->pc) && *(cp->pc) <= 16)
         {
-            if (!r_cycles[cp->pid])
-                r_cycles[cp->pid] = g_op_tab[*(cp->pc) - 1].cycles;
-            r_cycles[cp->pid]--;
-            if (!r_cycles[cp->pid])
+            if (!r_cycles[cp->pid + 1])
+                r_cycles[cp->pid + 1] = INSTR[*(cp->pc) - 1].cycles;
+            r_cycles[cp->pid + 1]--;
+            if (!r_cycles[cp->pid + 1])
             {
                 printf("Pid: %d\n", cp->pid);
                 printf("Cycle: %d\n", vm->corewar.cycle);
                 instruction_cycle(vm, cp);
+                printf("%p %x\n", cp->pc, *(cp->pc));
                 printf("---------------\n");
-                r_cycles[cp->pid] ^= r_cycles[cp->pid];
+                r_cycles[cp->pid + 1] ^= r_cycles[cp->pid + 1];
             }
         }
         cp = cp->next;

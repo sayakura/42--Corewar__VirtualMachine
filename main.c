@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/06/29 23:37:49 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/02 15:47:34 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,7 @@ int     main(int ac, char **av)
         exit(EXIT_SUCCESS);
     }
     read_args(&vm, ac, av);
-    print_mem(&vm);
     run(&vm);
-    print_mem(&vm);
     cleanup(&vm);
     return (0);
 }

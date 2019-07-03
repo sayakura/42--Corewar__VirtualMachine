@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 20:01:05 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/02 10:47:54 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/02 17:44:28 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,15 +64,30 @@ void    write_m(void *fd, void *buff, unsigned int size)
 }
 
 
-void    read_arg(t_instr *cinstr, uint8_t i, int32_t *buff, t_bool truc)
+void    read_arg(t_arg *arg, int32_t *buff, t_bool addressing)
 {
+    int32_t     tmp;
+
     *buff = 0;
-    if (cinstr->argvt[i] == INDIRECT_TYPE)
-        read_m(cinstr->argv[i], buff, 2);
-    else if (cinstr->argvt[i] == DIRECT_TYPE)
-        read_m(cinstr->argv[i], buff, truc ? 2 : 4);
+    tmp = 0;
+    if (arg->argvt == INDIRECT_TYPE)
+    {
+        read_m(arg->argv, &tmp, 2);
+        *buff = tmp;
+        if (addressing)
+        {
+            read_m(REL(PC, tmp), &tmp, 4);
+            *buff = tmp % IDX_MOD;
+        }
+    }
+    else if (arg->argvt == DIRECT_TYPE)
+        read_m(arg->argv, buff, INSTR[*PC - 1].truncate ? 2 : 4);
     else
-        read_m(cinstr->argv[i], buff, 1);
+    {
+        read_m(arg->argv, buff, 1);
+        if (addressing)
+            *buff = CP->registers[*buff];
+    }
 }
 
 // void    read_from_mem(t_byte *where, void *buff, uint8_t howmany,\

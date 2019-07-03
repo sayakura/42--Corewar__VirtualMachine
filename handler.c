@@ -1,11 +1,12 @@
 #include "handler.h"
+t_process *g_cur_process;
 
 void    ft_live(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     t_champ     *champ; printf("[live]\n");
     int32_t     id;
 
-    read_m(cinstr->argv[0], &id, REG_SIZE);
+    read_m(cinstr->arg[0].argv, &id, 4);
                                                            printf("Champion id: %d\n", id);
     champ = search_champion(vm, id);                                                  printf("at cycle: %d\n", vm->corewar.cycle);
     if (!champ)
@@ -17,58 +18,79 @@ void    ft_live(t_vm *vm, t_process *cp, t_instr *cinstr)
 
 void    ft_ld(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    int32_t     rdi;
-    int32_t     rsi;
-
-    read_arg(cinstr, 0, &rdi, false);
-    read_arg(cinstr, 1, &rsi, false);
-    //if (cinstr->argvt[rsi] == INDIRECT_TYPE)
-
-    cp->registers[rsi] = rdi;
-    printf("[ld] argv: [ %d | %d ]\n", rdi, rsi);
+    LD(EDI, &cinstr->arg[0]);
+    LEA(ESI, &cinstr->arg[1]);
+    MOV(REG(ESI), EDI);
+                                printf("[ld] argv: [ %d | %d ]\n", EDI, ESI);
 }
 
 void    ft_st(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    int32_t     rdi;
-    int32_t     rsi;
-
-    read_arg(cinstr, 0, &rdi, false);
-    read_arg(cinstr, 1, &rsi, false);
-    if (cinstr->argvt[1] == INDIRECT_TYPE)
-        write_m(REL(cinstr->pc, rsi), &cp->registers[rdi], REG_SIZE);    
+    LD(EDI, &cinstr->arg[0]);
+    LEA(ESI, &cinstr->arg[1]);
+    if (cinstr->arg[1].argvt == REGISTER_TYPE)
+    {
+        MOV(REG(ESI), EDI);
+    }
     else
-        write_m(&cp->registers[rsi], &cp->registers[rdi], REG_SIZE); 
-    printf("[st] argv: [ %d | %d ]\n", rdi, rsi);
+        MOV(*(REL(PC, ESI)), EDI);
+                                                printf("[st] argv: [ %d | %d ]\n", EDI, ESI);
 }
 
 void    ft_add(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("add trigger!\n");
+    LD(EDI, &cinstr->arg[0]);
+    LD(ESI, &cinstr->arg[1]);
+    ADD(EDI, ESI);
+    MOV(ECX, EDI);
+    CP->carry = !ECX;           printf("[st] add: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_sub(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("sub trigger!\n");
+    LD(EDI, &cinstr->arg[0]);
+    LD(ESI, &cinstr->arg[1]);
+    SUB(EDI, ESI);
+    MOV(ECX, EDI);
+    CP->carry = !ECX;           printf("[st] sub: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_and(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("and trigger!\n");
+    LD(EDI, &cinstr->arg[0]);
+    LD(ESI, &cinstr->arg[1]);
+    AND(EDI, ESI);
+    MOV(ECX, EDI);
+    CP->carry = !ECX;           printf("[st] and: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_or(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("or trigger!\n");
+    LD(EDI, &cinstr->arg[0]);
+    LD(ESI, &cinstr->arg[1]);
+    OR(EDI, ESI);
+    MOV(ECX, EDI);
+    CP->carry = !ECX;           printf("[or] and: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_xor(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("xor trigger!\n");
+    LD(EDI, &cinstr->arg[0]);
+    LD(ESI, &cinstr->arg[1]);
+    XOR(EDI, ESI);
+    MOV(ECX, EDI);
+    CP->carry = !ECX;           printf("[xor] and: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_zjmp(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
+    int32_t     offset;
+
+    if (CP->carry)
+    {
+        read_m(cinstr->arg[0].argv, &offset, 4);
+        CP->pc = REL(CP->pc, offset);
+    }
     printf("zjmp trigger!\n");
 }
 
@@ -79,28 +101,13 @@ void    ft_ldi(t_vm *vm, t_process *cp, t_instr *cinstr)
 
 void    ft_sti(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    int32_t     rdi;
-    int32_t     rsi;
-    int32_t     rcx;
-    t_byte      *ptr;
-
-    ptr = cinstr->pc;
-    read_arg(cinstr, 0, &rdi, true);
-    read_arg(cinstr, 1, &rsi, true);
-    if (cinstr->argvt[1] == REGISTER_TYPE)
-        ptr = REL(ptr,  cp->registers[rsi]);
-    else if (cinstr->argvt[1] == INDIRECT_TYPE)
-    {
-        read_m(REL(ptr, rsi), &rsi, 4);
-        ptr += rsi % IDX_MOD;
-    }
-    read_arg(cinstr, 2, &rcx, true);
-    if (cinstr->argvt[2] == REGISTER_TYPE)
-        ptr = REL(ptr,  cp->registers[rcx]);
-    else
-        ptr = REL(ptr, rcx);
-    write_m(ptr, &cp->registers[rdi], 4);
-    printf("[sti] argv: [ %d | %d | %d]\n", rdi, rsi, rcx);
+  
+    LD(EDI, &cinstr->arg[0]);
+    LD(ESI, &cinstr->arg[1]);
+    LD(ECX, cinstr->arg + 2);
+    ADD(ESI, ECX);
+    MOV(*REL(PC, ESI), EDI);        printf("[sti] argv: [ %d | %d | %d]\n", EDI, ESI, ECX);
+    
 }
 
 void    ft_fork(t_vm *vm, t_process *cp, t_instr *cinstr)
