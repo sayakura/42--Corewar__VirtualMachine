@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/02 18:27:39 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/03 20:31:05 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,9 @@
 # define REL(pc, offset) pc + (offset % IDX_MOD)
 # define LOG printf
 
-# define LEA(reg, mem) read_arg(mem, &reg, false);
-# define LD(reg, mem) read_arg(mem, &reg, true);
+# define LEA(reg, mem) read_arg(mem, &reg, false, false);
+# define LLEA(reg, mem) read_arg(mem, &reg, false, true);
+# define LD(reg, mem) read_arg(mem, &reg, true, false);
 # define EDI g_cur_process->registers[0]
 # define ESI g_cur_process->registers[1]
 # define ECX g_cur_process->registers[2]
@@ -198,5 +199,5 @@ t_champ			*search_champion(t_vm *vm, int32_t id);
 void 			mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
 void    		read_m(void *fd, void *buff, unsigned int size);
 void    		write_m(void *fd, void *buff, unsigned int size);
-void    		read_arg(t_arg *arg, int32_t *buff, t_bool addressing);
+void    		read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far);
 #endif

@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 20:01:05 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/02 17:44:28 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/03 20:15:39 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void    write_m(void *fd, void *buff, unsigned int size)
 }
 
 
-void    read_arg(t_arg *arg, int32_t *buff, t_bool addressing)
+void    read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far)
 {
     int32_t     tmp;
 
@@ -77,7 +77,7 @@ void    read_arg(t_arg *arg, int32_t *buff, t_bool addressing)
         if (addressing)
         {
             read_m(REL(PC, tmp), &tmp, 4);
-            *buff = tmp % IDX_MOD;
+            *buff = far ? tmp : tmp % IDX_MOD;
         }
     }
     else if (arg->argvt == DIRECT_TYPE)

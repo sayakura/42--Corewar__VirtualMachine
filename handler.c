@@ -117,7 +117,10 @@ void    ft_fork(t_vm *vm, t_process *cp, t_instr *cinstr)
 
 void    ft_lld(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("lld trigger!\n");
+    LD(EDI, &cinstr->arg[0]);
+    LLEA(ESI, &cinstr->arg[1]);
+    MOV(REG(ESI), EDI);
+    printf("[lld] argv: [ %d | %d | %d]\n", EDI, ESI, ECX);
 }
 
 void    ft_lldi(t_vm *vm, t_process *cp, t_instr *cinstr)
