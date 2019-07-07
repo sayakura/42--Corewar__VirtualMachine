@@ -16,14 +16,6 @@ void    ft_live(t_vm *vm, t_process *cp, t_instr *cinstr)
     champ->last_live = vm->corewar.cycle;
 }
 
-void    ft_ld(t_vm *vm, t_process *cp, t_instr *cinstr)
-{
-    LD(EDI, &cinstr->arg[0]);
-    LEA(ESI, &cinstr->arg[1]);
-    MOV(REG(ESI), EDI);
-                                printf("[ld] argv: [ %d | %d ]\n", EDI, ESI);
-}
-
 void    ft_st(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
     LD(EDI, &cinstr->arg[0]);
@@ -43,7 +35,7 @@ void    ft_add(t_vm *vm, t_process *cp, t_instr *cinstr)
     LD(ESI, &cinstr->arg[1]);
     ADD(EDI, ESI);
     MOV(ECX, EDI);
-    CP->carry = !ECX;           printf("[st] add: [ %d | %d | %d ]\n", EDI, ESI, ECX);
+    CP->carry = !ECX;           printf("[add] add: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_sub(t_vm *vm, t_process *cp, t_instr *cinstr)
@@ -52,7 +44,7 @@ void    ft_sub(t_vm *vm, t_process *cp, t_instr *cinstr)
     LD(ESI, &cinstr->arg[1]);
     SUB(EDI, ESI);
     MOV(ECX, EDI);
-    CP->carry = !ECX;           printf("[st] sub: [ %d | %d | %d ]\n", EDI, ESI, ECX);
+    CP->carry = !ECX;           printf("[sub] sub: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_and(t_vm *vm, t_process *cp, t_instr *cinstr)
@@ -61,7 +53,7 @@ void    ft_and(t_vm *vm, t_process *cp, t_instr *cinstr)
     LD(ESI, &cinstr->arg[1]);
     AND(EDI, ESI);
     MOV(ECX, EDI);
-    CP->carry = !ECX;           printf("[st] and: [ %d | %d | %d ]\n", EDI, ESI, ECX);
+    CP->carry = !ECX;           printf("[and] and: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_or(t_vm *vm, t_process *cp, t_instr *cinstr)
@@ -96,45 +88,73 @@ void    ft_zjmp(t_vm *vm, t_process *cp, t_instr *cinstr)
 
 void    ft_ldi(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("ldi trigger!\n");
+    LD(EDI, &cinstr->arg[0]);
+    LD(ESI, &cinstr->arg[1]);
+    ADD(ESI, ECX);
+    MOV(ECX, *REL(CP, ESI));
+    printf("[ldi] argv: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_sti(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-  
     LD(EDI, &cinstr->arg[0]);
     LD(ESI, &cinstr->arg[1]);
     LD(ECX, cinstr->arg + 2);
     ADD(ESI, ECX);
-    MOV(*REL(PC, ESI), EDI);        printf("[sti] argv: [ %d | %d | %d]\n", EDI, ESI, ECX);
-    
+    MOV(*REL(PC, ESI), EDI);        printf("[sti] argv: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_fork(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("fork trigger!\n");
+    int32_t offset;
+
+    read_m(cinstr->arg[0].argv, &offset, 4);
+    fork_process(vm, cp, offset, false);
+    printf("[fork] offset: %d\n", offset);
+}
+
+void    ft_ld(t_vm *vm, t_process *cp, t_instr *cinstr)
+{
+    LD(EDI, &cinstr->arg[0]);
+    LEA(ESI, &cinstr->arg[1]);
+    MOV(REG(ESI), EDI);
+    CP->carry = !EDI;
+                                printf("[ld] argv: [ %d | %d ]\n", EDI, ESI);
 }
 
 void    ft_lld(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    LD(EDI, &cinstr->arg[0]);
+    LLD(EDI, &cinstr->arg[0]);
     LLEA(ESI, &cinstr->arg[1]);
     MOV(REG(ESI), EDI);
+    CP->carry = !EDI;
     printf("[lld] argv: [ %d | %d | %d]\n", EDI, ESI, ECX);
 }
 
 void    ft_lldi(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("lldi trigger!\n");
+    LD(EDI, &cinstr->arg[0]);
+    LD(ESI, &cinstr->arg[1]);
+    ADD(ESI, ECX);
+    MOV(ECX, *(ABS(PC, ESI)));
+    CP->carry = !ECX;
+    printf("[lldi] argv: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_lfork(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("lfork trigger!\n");
+    int32_t offset;
+
+    read_m(cinstr->arg[0].argv, &offset, 4);
+    fork_process(vm, cp, offset, true);
+    printf("[lfork] \n");
 }
 
 void    ft_aff(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
-    printf("aff trigger!\n");
+    uint8_t c;
+    LD(EDI, &cinstr->arg[0]);
+    c = EDI % 256;
+    printf("%c", c);
 }
 

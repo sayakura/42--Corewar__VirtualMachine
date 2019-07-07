@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/02 18:16:20 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/06 21:16:13 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,23 @@ static t_instr_hdlr instr_funptr[] = {
     ft_aff
 };
 
-t_byte  *advance_pc(t_byte **cur, off_t offset)
+void    fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far)
+{
+    t_process           *process;
+
+    process = malloc(sizeof(t_process));
+    bzero_(process, sizeof(t_process));
+    memcpy_(process->registers, parent->registers, sizeof(process->registers));
+    process->pc =  parent->pc + (far ? offset : (offset % IDX_MOD));
+    process->pid = parent->pid;
+    process->champion = parent->champion;
+    if (vm->process_list)
+        process->next = vm->process_list;
+    vm->process_list = process;
+    vm->nprocess++;
+}
+
+t_byte  *advance_pc(t_byte **cur, int32_t offset)
 {
     t_byte          *end;
     off_t           diff;
@@ -39,6 +55,7 @@ t_byte  *advance_pc(t_byte **cur, off_t offset)
     end = g_base + MEM_SIZE;
     if ((diff = ((*cur += offset) - end)) > 0)
         *cur = g_base + diff;
+    //printf("jmp[%d] to: %p %x\n", offset, *cur, **cur);
     return (*cur);
 }
 
@@ -62,16 +79,20 @@ void    decode_without_acb(t_byte **pc, t_arg *arg,  t_op *op)
 
     i = ITERATOR;
     advance_pc(pc, 1);
-    while (INC(i) < op->argc)
-    {
-        arg[i].argv = *pc;
-        if (op->argvt[i] & T_DIR)
-            advance_pc(pc, DIR_SIZE);
-        else if (op->argvt[i] & T_REG)
-            advance_pc(pc, REG_SIZE);
-        else if (op->argvt[i] & T_IND)
-            advance_pc(pc, IND_SIZE);
-    }
+    arg[0].argv = *pc;
+    advance_pc(pc, 4);
+    return ;
+    // while (INC(i) < op->argc)
+    // {
+    //     arg[i].argv = *pc;
+    //     advance_pc(pc, 4);
+    //     if (op->argvt[i] & T_DIR)
+    //         advance_pc(pc, DIR_SIZE);
+    //     else if (op->argvt[i] & T_REG)
+    //         advance_pc(pc, REG_SIZE);
+    //     else if (op->argvt[i] & T_IND)
+    //         advance_pc(pc, IND_SIZE);
+    // }
 }
 
 void    decode_with_acb(t_byte **pc, t_arg *arg, t_op *op)
@@ -107,20 +128,20 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
     static t_instr      i;
     
     i.instr = *cp->pc;
-    //cp->cpc = cp->pc;
 
     cp->cpc = i.pc = cp->pc;
     op = &INSTR[i.instr - 1];
     i.argc = op->argc;
-    //printf("%p\n" , cp->cpc);
     if (op->coding_byte)
         decode_with_acb(&cp->pc, i.arg, op);
     else
-        decode_without_acb(&cp->pc, i.arg, op);
+    {
+        advance_pc(&cp->pc, 1);
+        i.arg[0].argv = cp->pc;
+        advance_pc(&cp->pc, 4);
+    }
     g_cur_process = cp;
-
     execute(vm, cp, &i);
-    //printf("%p\n", cp->pc);
     print_mem(vm);
 }
 

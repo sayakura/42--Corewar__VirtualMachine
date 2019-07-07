@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/03 20:31:05 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/06 19:36:02 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,13 @@
 # define MEM_POS()
 
 # define REL(pc, offset) pc + (offset % IDX_MOD)
+# define ABS(pc, offset) pc + offset
 # define LOG printf
 
 # define LEA(reg, mem) read_arg(mem, &reg, false, false);
 # define LLEA(reg, mem) read_arg(mem, &reg, false, true);
 # define LD(reg, mem) read_arg(mem, &reg, true, false);
+# define LLD(reg, mem) read_arg(mem, &reg, true, true);
 # define EDI g_cur_process->registers[0]
 # define ESI g_cur_process->registers[1]
 # define ECX g_cur_process->registers[2]
@@ -119,13 +121,9 @@ typedef struct      s_champ
 typedef struct      	s_process
 {
     t_word         		registers[REG_NUMBER + 1];
-    int             	state;
     t_byte            	*pc;
 	t_byte 				*cpc;
-	t_byte				*ip;
     int32_t         	pid;
-	t_task				cur_task;
-	uint16_t			remaining_cycle;
 	t_champ				*champion;
 	struct s_process	*next;
 	t_bool				carry;
@@ -188,7 +186,7 @@ void    		loader(t_vm *vm, char *filename);
 
 //process
 void    		process_loop(t_vm   *vm);
-
+void    		fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far);
 
 // champion
 t_champ			*search_champion(t_vm *vm, int32_t id);
