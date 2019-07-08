@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 20:01:05 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/03 20:15:39 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/07 22:09:52 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,6 @@ void    read_m(void *fd, void *buff, unsigned int size)
     rev_bytes(buff, size);
 }
 
-// void    read_rel(void *fd, void *buff, unsigned int size)
-// {
-//     mem_oper(READ, (t_byte *)buff, (t_byte *)fd, size);
-//     rev_bytes(buff, size);
-// }
-
 void    write_m(void *fd, void *buff, unsigned int size)
 {
     mem_oper(WRITE, (t_byte *)fd, (t_byte *)buff, size);
@@ -75,10 +69,7 @@ void    read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far)
         read_m(arg->argv, &tmp, 2);
         *buff = tmp;
         if (addressing)
-        {
-            read_m(REL(PC, tmp), &tmp, 4);
-            *buff = far ? tmp : tmp % IDX_MOD;
-        }
+            read_m(REL(PC, (far ? tmp : tmp % IDX_MOD)), buff, 4);
     }
     else if (arg->argvt == DIRECT_TYPE)
         read_m(arg->argv, buff, INSTR[*PC - 1].truncate ? 2 : 4);

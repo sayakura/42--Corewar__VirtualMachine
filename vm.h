@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/06 19:36:02 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/07 16:37:18 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,9 @@
 # define LLEA(reg, mem) read_arg(mem, &reg, false, true);
 # define LD(reg, mem) read_arg(mem, &reg, true, false);
 # define LLD(reg, mem) read_arg(mem, &reg, true, true);
-# define EDI g_cur_process->registers[0]
-# define ESI g_cur_process->registers[1]
-# define ECX g_cur_process->registers[2]
+# define EDI g_cur_process->registers[1]
+# define ESI g_cur_process->registers[2]
+# define ECX g_cur_process->registers[3]
 # define ADD(reg1, reg2) reg1 += reg2
 # define SUB(reg1, reg2) reg1 -= reg2
 # define AND(reg1, reg2) reg1 &= reg2
@@ -146,6 +146,7 @@ typedef struct      s_vm
     t_process       *process_list;
 	uint8_t			nprocess;
     t_cw            corewar;
+	t_bool 			debug_mode;
 }                   t_vm;
 
 typedef	struct 		s_arg

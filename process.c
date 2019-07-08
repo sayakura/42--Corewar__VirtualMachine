@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/06 21:16:13 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/07 15:16:55 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,28 +72,28 @@ void    execute(t_vm *vm, t_process *cp, t_instr *cinstr)
 ** acb = argument's coding byte
 */
 
-void    decode_without_acb(t_byte **pc, t_arg *arg,  t_op *op)
-{
-    t_byte         acb;
-    uint8_t        i;
+// void    decode_without_acb(t_byte **pc, t_arg *arg,  t_op *op)
+// {
+//     t_byte         acb;
+//     uint8_t        i;
 
-    i = ITERATOR;
-    advance_pc(pc, 1);
-    arg[0].argv = *pc;
-    advance_pc(pc, 4);
-    return ;
-    // while (INC(i) < op->argc)
-    // {
-    //     arg[i].argv = *pc;
-    //     advance_pc(pc, 4);
-    //     if (op->argvt[i] & T_DIR)
-    //         advance_pc(pc, DIR_SIZE);
-    //     else if (op->argvt[i] & T_REG)
-    //         advance_pc(pc, REG_SIZE);
-    //     else if (op->argvt[i] & T_IND)
-    //         advance_pc(pc, IND_SIZE);
-    // }
-}
+//     i = ITERATOR;
+//     advance_pc(pc, 1);
+//     arg[0].argv = *pc;
+//     advance_pc(pc, 4);
+//     return ;
+//     // while (INC(i) < op->argc)
+//     // {
+//     //     arg[i].argv = *pc;
+//     //     advance_pc(pc, 4);
+//     //     if (op->argvt[i] & T_DIR)
+//     //         advance_pc(pc, DIR_SIZE);
+//     //     else if (op->argvt[i] & T_REG)
+//     //         advance_pc(pc, REG_SIZE);
+//     //     else if (op->argvt[i] & T_IND)
+//     //         advance_pc(pc, IND_SIZE);
+//     // }
+// }
 
 void    decode_with_acb(t_byte **pc, t_arg *arg, t_op *op)
 {
@@ -122,6 +122,11 @@ void    decode_with_acb(t_byte **pc, t_arg *arg, t_op *op)
     }
 }
 
+void    debug_loop()
+{
+    
+}
+
 void    instruction_cycle(t_vm *vm, t_process *cp)
 {
     t_op                *op;
@@ -145,6 +150,20 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
     print_mem(vm);
 }
 
+void    print_register(t_process *cp)
+{
+    int     i;
+
+    i = 0;
+    printf("register status: [");
+    while (i < REG_NUMBER)
+    {
+        printf(" %d | ", cp->registers[i]);
+        i++;
+    }
+    printf("]\n");
+}
+
 void    process_loop(t_vm   *vm)
 {
     t_process       *cp;
@@ -163,7 +182,11 @@ void    process_loop(t_vm   *vm)
             {
                 printf("Pid: %d\n", cp->pid);
                 printf("Cycle: %d\n", vm->corewar.cycle);
+                if (vm->debug_mode)
+                    print_register(cp);
                 instruction_cycle(vm, cp);
+                 if (vm->debug_mode)
+                    print_register(cp);
                 printf("%p %x\n", cp->pc, *(cp->pc));
                 printf("---------------\n");
                 r_cycles[cp->pid + 1] ^= r_cycles[cp->pid + 1];

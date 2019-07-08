@@ -115,11 +115,18 @@ void    ft_fork(t_vm *vm, t_process *cp, t_instr *cinstr)
 
 void    ft_ld(t_vm *vm, t_process *cp, t_instr *cinstr)
 {
+    XOR(EDI, EDI);
+    mem_oper(READ, (t_byte *)&EDI, (t_byte *)&cinstr->arg[0].argv, 2);
+    // rev_bytes(&EDI, 4);
+    printf("--> EDI: %d\n", EDI);
+
     LD(EDI, &cinstr->arg[0]);
+    rev_bytes(&EDI, sizeof(EDI));
+    XOR(ESI, ESI);
     LEA(ESI, &cinstr->arg[1]);
     MOV(REG(ESI), EDI);
     CP->carry = !EDI;
-                                printf("[ld] argv: [ %d | %d ]\n", EDI, ESI);
+    printf("[ld] argv: [ %d | %d ]\n", EDI, ESI);
 }
 
 void    ft_lld(t_vm *vm, t_process *cp, t_instr *cinstr)
