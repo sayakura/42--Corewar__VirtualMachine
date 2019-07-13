@@ -6,12 +6,28 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/02 16:09:59 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/12 21:39:22 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vm.h"
 #include <math.h>
+
+/**
+ *  init a process and insert it at the beginning of the 
+ *  process list.
+ * 
+ *  pid started at -1, the byte code is ffff ffff.
+ * 
+ *  need to assign the pid to the first register of the 
+ *  process, so that the champion can call live with 
+ *  the right value indicating that the process/champion
+ *  with this pid is alive.
+ * 
+ * @param {t_vm} vm - current vm structure
+ * @param {void *} pc - current program counter
+ * 
+ */
 
 void    init_process(t_vm *vm, void * pc)
 {
@@ -23,7 +39,6 @@ void    init_process(t_vm *vm, void * pc)
     process->pc = pc;
     process->pid = pid;
     process->registers[1] = pid;
-    //process->state = CREATE;
     printf("initing... pid: %d\n", pid);
     pid++;
     if (vm->process_list)
@@ -32,7 +47,30 @@ void    init_process(t_vm *vm, void * pc)
     vm->nprocess++;
 }
 
-// read .cor from command line, parse the info and load it into the memory
+/**
+ *  read .cor from command line, parse the info and load it
+ *  into the memory
+ *  
+ *  parse the header of the champion file into t_hdr
+ *  copy the name of the champion and the comment into 
+ *  t_champ and the t_champ goes into t_vm.champions
+ *  the id of the champion will be the same as pid of
+ *  the process, but when displaying to the terminal
+ *  we need to +2 to the value (pid start at -1, but
+ *  it's also the 1st process aka "player 1")
+ * 
+ *  the acutal byte codes of the champion will be copied 
+ *  into the arena (vm.memory), and the corresponding
+ *  process will be initialized, as you know, 
+ *  a process is the instance of a champion that
+ *  is being executed 
+ * 
+ * @param {t_vm} vm - current vm structure
+ * @param {int} fd - file descriptor of the file where the
+ * champion is stored
+ * 
+ */
+
 void    load_champ(t_vm *vm, int fd)
 {
     t_hdr               hdr;

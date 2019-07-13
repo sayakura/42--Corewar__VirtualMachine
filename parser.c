@@ -1,5 +1,15 @@
 #include "vm.h"
 
+/**
+ *  parse the champion header into t_hdr
+ *  the magic is in little endianess format
+ * 
+ * @param {t_hdr} hdr - current vm structure
+ * @param {int} fd - file descriptor of the file where the
+ * champion is stored
+ * 
+ */
+
 void    parse_champ_header(t_hdr *hdr, int fd)
 {
     off_t   siz;
