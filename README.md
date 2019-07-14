@@ -15,7 +15,7 @@ make test # run unit testing
 ## Directory structure
 
 ```
-+- functions/ 
++- corewar/ 
     |
     +- include  # folder that contains all the header
     |
