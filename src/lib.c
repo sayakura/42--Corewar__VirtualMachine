@@ -19,7 +19,7 @@ int         strlen_(char *str)
 void		perror_(const char *s)
 {
     char    *str;
-
+	
 	if (errno < 0)
         write(2, UNKNOWN_ERROR, strlen_(UNKNOWN_ERROR));
 	else
@@ -27,6 +27,7 @@ void		perror_(const char *s)
         str = strerror(errno);
         write(2, str, strlen_(str));
     }
+	(void)s;
 }
 
 int			strcmp_(const char *rdi, const char *rsi)

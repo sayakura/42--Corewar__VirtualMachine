@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/07 15:16:55 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/13 17:27:26 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ t_byte  *advance_pc(t_byte **cur, int32_t offset)
     return (*cur);
 }
 
-void    execute(t_vm *vm, t_process *cp, t_instr *cinstr)
+void    execute(t_vm *vm, t_instr *cinstr)
 {
-    (instr_funptr[cinstr->instr - 1])(vm, cp, cinstr);
+    (instr_funptr[cinstr->instr - 1])(vm, cinstr);
     //printf("Running... %s\n", g_op_tab[instr - 1].name);
 }
 
@@ -146,7 +146,7 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
         advance_pc(&cp->pc, 4);
     }
     g_cur_process = cp;
-    execute(vm, cp, &i);
+    execute(vm, &i);
     print_mem(vm);
 }
 

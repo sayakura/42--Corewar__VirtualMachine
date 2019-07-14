@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/07 15:16:24 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/13 17:26:47 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void    run(t_vm *vm)
 void    read_args(t_vm *vm, int ac, char **av)
 {
     int     i;
-    int     fd;
 
     i = 1;
     while (i < ac)

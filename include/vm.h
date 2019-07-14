@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/07 16:37:18 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/13 17:30:30 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,22 +28,20 @@
 #define DIRECT_TYPE 0b10000000
 #define INDIRECT_TYPE 0b11000000
 #define GET_ACB_TYPE(acb) (acb & 0b11000000)
+# define MAP_START g_base
+# define MAP_END g_base + MEM_SIZE
 #define FOR_EACH(item, array) typeof(*(array)) *start = array;\
                             typeof(*(array)) *end = (start + (sizeof(array) / sizeof*(array)) + 1);\
                             typeof(*(array)) *item;\
                             while ((item = start) && start++ != end )
-
 # define READ_FROM_MEM(a, b, c, d) mem_oper(READ, (t_byte *)b, a, c); if (d) rev_bytes(b, c);
-# define WRITE_TO_MEM(a, b, c, d) mem_oper(WRITE, a, (t_byte *)b, c); if (d) rev_bytes(a, c);
+# define WRITE_TO_MEM(a, b, c, d) if(d == LITTLE_E)rev_bytes(a, c); mem_oper(WRITE, (t_byte *)a, (t_byte *)b, c); ;
 # define READ_(i, b, c)  READ_FROM_MEM(i, b, c, BIG_E);
-# define WRITE_(i, b, c)  WRITE_TO_MEM(i, b, c, BIG_E);
-
-# define MEM_POS()
-
-# define REL(pc, offset) pc + (offset % IDX_MOD)
-# define ABS(pc, offset) pc + offset
+# define WRITE_(i, b, c)  WRITE_TO_MEM(i, b, c, LITTLE_E);
+# define MEM_POX(a) mem_pos(a)
+# define REL(pc, offset) MEM_POX(pc + (offset % IDX_MOD))
+# define ABS(pc, offset)  MEM_POX(pc + offset)
 # define LOG printf
-
 # define LEA(reg, mem) read_arg(mem, &reg, false, false);
 # define LLEA(reg, mem) read_arg(mem, &reg, false, true);
 # define LD(reg, mem) read_arg(mem, &reg, true, false);
@@ -56,7 +54,7 @@
 # define AND(reg1, reg2) reg1 &= reg2
 # define OR(reg1, reg2) reg1 |= reg2
 # define XOR(reg1, reg2) reg1 ^= reg2
-# define MOV(r1, r2) write_m(&r1, &r2, 4);
+# define MOV(r1, r2) WRITE_(&r1, &r2, 4);
 // # define MOV
 # define PC g_cur_process->cpc
 # define CP g_cur_process
@@ -167,7 +165,7 @@ typedef struct 		s_instr
 }					t_instr;
 
 
-typedef void(*t_instr_hdlr)(t_vm *, t_process *, t_instr *);
+typedef void(*t_instr_hdlr)(t_vm *, t_instr *);
 
 extern t_op g_op_tab[17];
 extern uint8_t	*g_base;
@@ -195,6 +193,7 @@ t_champ			*search_champion(t_vm *vm, int32_t id);
 
 // memory 
 
+t_byte 			*mem_pos(t_byte *pos);
 void 			mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
 void    		read_m(void *fd, void *buff, unsigned int size);
 void    		write_m(void *fd, void *buff, unsigned int size);
