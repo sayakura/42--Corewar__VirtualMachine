@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/13 17:30:30 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/17 20:13:54 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,4 +198,10 @@ void 			mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
 void    		read_m(void *fd, void *buff, unsigned int size);
 void    		write_m(void *fd, void *buff, unsigned int size);
 void    		read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far);
+
+
+void    cleanup(t_vm *vm);
+void    read_args(t_vm *vm, int ac, char **av);
+void    run(t_vm *vm);
+void    init(int ac, char **av);
 #endif

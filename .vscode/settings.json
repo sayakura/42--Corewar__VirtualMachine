@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "type_traits": "c"
+        "type_traits": "c",
+        "console.h": "c",
+        "basic.h": "c",
+        "automated.h": "c"
     }
 }

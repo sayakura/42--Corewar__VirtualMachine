@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/06/16 23:19:51 by qpeng             #+#    #+#              #
-#    Updated: 2019/07/17 20:14:16 by qpeng            ###   ########.fr        #
+#    Created: 2019/07/17 18:31:08 by qpeng             #+#    #+#              #
+#    Updated: 2019/07/17 20:10:39 by qpeng            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,16 +15,14 @@ SRC = champion.c\
 		helper.c\
 		lib.c\
 		loader.c\
-		main.c\
 		memory.c\
-		init.c\
 		op.c\
 		process.c
-
 FILES = $(addprefix src/, $(SRC))
 
-all:
-	gcc -g -Iinclude -fsanitize=address $(FILES)
+CUNIT_PATH=/nfs/2018/q/qpeng/.brew/Cellar/cunit/2.1-3/include
 
 test:
-	gcc -g -Iinclude -Wall -Werror -Wextra -fsanitize=address FILES tests/libunity.a
+	gcc $$(pkg-config --cflags --libs cunit) -I$(CUNIT_PATH) test.c $(FILES)
+all: test
+
