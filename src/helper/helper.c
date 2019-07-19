@@ -32,3 +32,17 @@ void	puthex(unsigned char c)
 	ft_putchar(base[c / 16]);
 	ft_putchar(base[c % 16]);
 }
+
+void    print_register(t_process *cp)
+{
+    int     i;
+
+    i = 0;
+    printf("register status: [");
+    while (i < REG_NUMBER)
+    {
+        printf(" %d | ", cp->registers[i]);
+        i++;
+    }
+    printf("]\n");
+}

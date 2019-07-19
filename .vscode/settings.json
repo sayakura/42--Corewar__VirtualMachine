@@ -3,6 +3,7 @@
         "type_traits": "c",
         "console.h": "c",
         "basic.h": "c",
-        "automated.h": "c"
+        "automated.h": "c",
+        "corewar.h": "c"
     }
 }

@@ -1,17 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   loader.c                                           :+:      :+:    :+:   */
+/*   champion.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/13 16:39:50 by qpeng            ###   ########.fr       */
+/*   Created: 2019/06/26 15:02:14 by qpeng             #+#    #+#             */
+/*   Updated: 2019/07/18 23:18:13 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "vm.h"
-#include <math.h>
+#include "corewar/corewar.h"
+
+/**
+ *  search through process list, find 
+ *  the champion with the specific id and return 
+ *  it 
+ * 
+ * @param {t_vm} vm - current vm structure
+ * @param {int32_t} id - targeted champion's id
+ */
+
+t_champ *ch_search_champion(t_vm *vm, int32_t id)
+{
+    FOR_EACH(champ, vm->corewar.champions)
+    {
+        if (champ->id == id)
+            return champ;
+    }
+    return (NULL);
+}
 
 
 /**
@@ -23,8 +41,7 @@
  *      champion is stored
  * 
  */
-
-void    parse_champ_header(t_hdr *hdr, int fd)
+void    ch_parse_champ_header(t_hdr *hdr, int fd)
 {
     off_t   siz;
 
@@ -55,40 +72,6 @@ void    parse_champ_header(t_hdr *hdr, int fd)
 }
 
 /**
- *  init a process and insert it at the beginning of the 
- *  process list.
- * 
- *  pid started at -1, the byte code is ffff ffff.
- * 
- *  need to assign the pid to the first register of the 
- *  process, so that the champion can call live with 
- *  the right value indicating that the process/champion
- *  with this pid is alive.
- * 
- * @param {t_vm} vm - current vm structure
- * @param {void *} pc - current program counter
- * 
- */
-
-void    init_process(t_vm *vm, void * pc)
-{
-    t_process           *process;
-    static int32_t      pid = -1;
-
-    process = malloc(sizeof(t_process));
-    bzero_(process, sizeof(t_process));
-    process->pc = pc;
-    process->pid = pid;
-    process->registers[1] = pid;
-    printf("initing... pid: %d\n", pid);
-    pid++;
-    if (vm->process_list)
-        process->next = vm->process_list;
-    vm->process_list = process;
-    vm->nprocess++;
-}
-
-/**
  *  read .cor from command line, parse the info and load it
  *  into the memory
  *  
@@ -111,8 +94,7 @@ void    init_process(t_vm *vm, void * pc)
  *      champion is stored
  * 
  */
-
-void    load_champ(t_vm *vm, int fd)
+void    ch_load_champ(t_vm *vm, int fd)
 {
     t_hdr               hdr;
     t_champ             *champ;
@@ -132,35 +114,4 @@ void    load_champ(t_vm *vm, int fd)
         hdr.prog_size, champ->name, champ->comment);
     index++;
     close(fd);
-}
-
-void    print_mem(t_vm *vm)
-{
-    int                 i;
-    unsigned            siz;
-
-    i = 0;
-    siz = (unsigned)sqrt(MEM_SIZE);
-    while (i < 100) // < MEM_SZIE
-    {
-        if (i % siz == 0)
-        {
-            if (i)
-                printf("\n");
-            printf("%#06x : ", i);
-        }
-        puthex(vm->memory[i]);
-        printf(" ");
-        i++;
-    }
-    printf("\n");
-}
-
-void    loader(t_vm *vm, char *filename)
-{
-    int fd;
-
-    if ((fd = open(filename, O_RDONLY)) == -1)
-        PERROR("open"); 
-    load_champ(vm, fd);
 }

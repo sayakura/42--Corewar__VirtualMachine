@@ -6,11 +6,13 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/13 17:27:26 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/18 23:27:17 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "vm.h"
+#include "corewar/process.h"
+#include "corewar/corewar.h"
+#include "corewar/instruction.h"
 
 static t_instr_hdlr instr_funptr[] = {
     ft_live,
@@ -31,6 +33,44 @@ static t_instr_hdlr instr_funptr[] = {
     ft_aff
 };
 
+/**
+ *  init a process and insert it at the beginning of the 
+ *  process list.
+ * 
+ *  pid started at -1, the byte code is ffff ffff.
+ * 
+ *  need to assign the pid to the first register of the 
+ *  process, so that the champion can call live with 
+ *  the right value indicating that the process/champion
+ *  with this pid is alive.
+ * 
+ * @param {t_vm} vm - current vm structure
+ * @param {void *} pc - current program counter
+ * 
+ */
+void    init_process(t_vm *vm, void * pc)
+{
+    t_process           *process;
+    static int32_t      pid = -1;
+
+    process = malloc(sizeof(t_process));
+    bzero_(process, sizeof(t_process));
+    process->pc = pc;
+    process->pid = pid;
+    process->registers[1] = pid;
+    printf("initing... pid: %d\n", pid);
+    pid++;
+    if (vm->process_list)
+        process->next = vm->process_list;
+    vm->process_list = process;
+    vm->nprocess++;
+}
+
+
+/**
+ *   tbc
+ * 
+ */
 void    fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far)
 {
     t_process           *process;
@@ -120,11 +160,6 @@ void    decode_with_acb(t_byte **pc, t_arg *arg, t_op *op)
             advance_pc(pc, IND_SIZE);
         acb <<= 2;
     }
-}
-
-void    debug_loop()
-{
-    
 }
 
 void    instruction_cycle(t_vm *vm, t_process *cp)

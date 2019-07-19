@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   common.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/07/18 22:01:36 by qpeng             #+#    #+#             */
+/*   Updated: 2019/07/18 22:01:36 by qpeng            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -12,6 +24,9 @@
 #define ERROR(s) ({ printf(s); exit(1);})
 #define false 0
 #define true 1
+#define ITERATOR -1
+#define INC(num) (++num)
+#define ONEBYTE 1
 
 typedef uint8_t t_bool;
 typedef uint8_t t_byte;
