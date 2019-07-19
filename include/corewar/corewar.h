@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/17 20:30:16 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/18 23:19:15 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/19 15:53:52 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct      s_champ
 	char			comment[COMMENT_LENGTH + 1];
 	uint32_t		lives;
 	uint32_t 		last_live;
+	t_byte			*pc;
 }                   t_champ;
 
 typedef struct      s_cw

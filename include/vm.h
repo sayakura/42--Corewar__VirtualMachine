@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/17 20:13:54 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/19 15:15:42 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ void    		loader(t_vm *vm, char *filename);
 
 //process
 void    		process_loop(t_vm   *vm);
-void    		fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far);
+void    		p_fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far);
 
 // champion
 t_champ			*search_champion(t_vm *vm, int32_t id);

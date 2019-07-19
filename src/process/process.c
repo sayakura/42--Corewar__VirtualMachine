@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/18 23:27:17 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/19 16:03:25 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ static t_instr_hdlr instr_funptr[] = {
     ft_aff
 };
 
+
+
 /**
  *  init a process and insert it at the beginning of the 
  *  process list.
@@ -48,7 +50,7 @@ static t_instr_hdlr instr_funptr[] = {
  * @param {void *} pc - current program counter
  * 
  */
-void    init_process(t_vm *vm, void * pc)
+void    p_init_process(t_vm *vm, void * pc)
 {
     t_process           *process;
     static int32_t      pid = -1;
@@ -66,19 +68,49 @@ void    init_process(t_vm *vm, void * pc)
     vm->nprocess++;
 }
 
+t_process   *p_create_process()
+{
+    t_process           *process;
+    static int32_t      pid = -1;
+
+    process = malloc(sizeof(t_process));
+    bzero_(process, sizeof(t_process));
+    process->pid = pid;
+    process->registers[1] = pid;
+    return process;
+}
+
+void    p_spawn_process(t_champ *champion, t_process *process_list)
+{
+    t_process   *p;
+
+    FOR_EACH(champ, champion)
+    {
+        p = p_create_process();
+        p->pc = champ->pc;
+    }
+}
 
 /**
- *   tbc
+ *  a sys call for lfork
+ *  fork a process and append it to the process list
+ *  the pc of the forked process will have its pc 
+ *  at pc + (offset % IDX_MOD), if this is a long fork
+ *  then the offset is not mod by IDX_MOD
  * 
+ * @param {t_vm} vm - current vm structure
+ * @param {t_process *} parent - the parent process that's copying from
+ * @param {int32_t} offset - offset of the pc 
+ * @param {t_bool} is_long - whather it's a fork or lfork
  */
-void    fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far)
+void    p_fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool is_long)
 {
     t_process           *process;
 
     process = malloc(sizeof(t_process));
     bzero_(process, sizeof(t_process));
     memcpy_(process->registers, parent->registers, sizeof(process->registers));
-    process->pc =  parent->pc + (far ? offset : (offset % IDX_MOD));
+    process->pc =  parent->pc + (is_long ? offset : (offset % IDX_MOD));
     process->pid = parent->pid;
     process->champion = parent->champion;
     if (vm->process_list)
@@ -87,6 +119,17 @@ void    fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far)
     vm->nprocess++;
 }
 
+/**
+ *   advance the pc by offset, check if the 
+ *  destination exceeds the size of the map, if yes 
+ *  then the exceeded part will be added to the beginning of the 
+ *  map
+ * 
+ * @param {t_vm} vm - current vm structure
+ * @param {t_process *} parent - the parent process that's copying from
+ * @param {int32_t} offset - offset of the pc 
+ * @param {t_bool} is_long - whather it's a fork or lfork
+ */
 t_byte  *advance_pc(t_byte **cur, int32_t offset)
 {
     t_byte          *end;
@@ -99,41 +142,6 @@ t_byte  *advance_pc(t_byte **cur, int32_t offset)
     return (*cur);
 }
 
-void    execute(t_vm *vm, t_instr *cinstr)
-{
-    (instr_funptr[cinstr->instr - 1])(vm, cinstr);
-    //printf("Running... %s\n", g_op_tab[instr - 1].name);
-}
-
-/*
-** advance the program counter to the next instruction
-** and decode it into argvt and argv
-** pc = program counter / instruction pointer
-** acb = argument's coding byte
-*/
-
-// void    decode_without_acb(t_byte **pc, t_arg *arg,  t_op *op)
-// {
-//     t_byte         acb;
-//     uint8_t        i;
-
-//     i = ITERATOR;
-//     advance_pc(pc, 1);
-//     arg[0].argv = *pc;
-//     advance_pc(pc, 4);
-//     return ;
-//     // while (INC(i) < op->argc)
-//     // {
-//     //     arg[i].argv = *pc;
-//     //     advance_pc(pc, 4);
-//     //     if (op->argvt[i] & T_DIR)
-//     //         advance_pc(pc, DIR_SIZE);
-//     //     else if (op->argvt[i] & T_REG)
-//     //         advance_pc(pc, REG_SIZE);
-//     //     else if (op->argvt[i] & T_IND)
-//     //         advance_pc(pc, IND_SIZE);
-//     // }
-// }
 
 void    decode_with_acb(t_byte **pc, t_arg *arg, t_op *op)
 {
@@ -168,7 +176,6 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
     static t_instr      i;
     
     i.instr = *cp->pc;
-
     cp->cpc = i.pc = cp->pc;
     op = &INSTR[i.instr - 1];
     i.argc = op->argc;
@@ -181,23 +188,10 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
         advance_pc(&cp->pc, 4);
     }
     g_cur_process = cp;
-    execute(vm, &i);
+    (instr_funptr[i.instr - 1])(vm, &i);
     print_mem(vm);
 }
 
-void    print_register(t_process *cp)
-{
-    int     i;
-
-    i = 0;
-    printf("register status: [");
-    while (i < REG_NUMBER)
-    {
-        printf(" %d | ", cp->registers[i]);
-        i++;
-    }
-    printf("]\n");
-}
 
 void    process_loop(t_vm   *vm)
 {

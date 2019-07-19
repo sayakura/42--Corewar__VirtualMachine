@@ -119,7 +119,7 @@ void    ft_fork(t_vm *vm, t_instr *cinstr)
 
     (void)vm;
     READ_(cinstr->arg[0].argv, &offset, 4);
-    fork_process(vm, CP, offset, false);
+    p_fork_process(vm, CP, offset, false);
     printf("[fork] offset: %d\n", offset);
 }
 
@@ -167,7 +167,7 @@ void    ft_lfork(t_vm *vm, t_instr *cinstr)
 
     (void)vm;
     READ_(cinstr->arg[0].argv, &offset, 4);
-    fork_process(vm, CP, offset, true);
+    p_fork_process(vm, CP, offset, true);
     printf("[lfork] \n");
 }
 

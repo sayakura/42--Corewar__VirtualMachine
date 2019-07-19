@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 15:02:14 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/18 23:18:13 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/19 15:54:32 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
  * @param {t_vm} vm - current vm structure
  * @param {int32_t} id - targeted champion's id
  */
-
 t_champ *ch_search_champion(t_vm *vm, int32_t id)
 {
     FOR_EACH(champ, vm->corewar.champions)
@@ -99,19 +98,21 @@ void    ch_load_champ(t_vm *vm, int fd)
     t_hdr               hdr;
     t_champ             *champ;
     static uint8_t      index;
-    void                *pc;
+    //void                *pc;
 
-    parse_champ_header(&hdr, fd);
+    ch_parse_champ_header(&hdr, fd);
     champ = &(vm->corewar.champions[index]);
 	memcpy_(champ->name, hdr.prog_name, PROG_NAME_LENGTH);
 	memcpy_(champ->comment, hdr.comment, COMMENT_LENGTH);
     champ->id = index - 1;
-	pc = &vm->memory[(MEM_SIZE / vm->corewar.nplayers) * index];
+	champ->pc = &vm->memory[(MEM_SIZE / vm->corewar.nplayers) * index];
 	if (read(fd, pc, hdr.prog_size) != hdr.prog_size)
 		PERROR("read");
-    init_process(vm, pc);
+
+    p_init_process(vm, pc);
     LOG("* Player %d, weighing %d bytes, \"%s\" (\"%s\") !\n",  champ->id + 2, 
         hdr.prog_size, champ->name, champ->comment);
+
     index++;
     close(fd);
 }
