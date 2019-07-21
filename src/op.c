@@ -6,12 +6,12 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/10/04 11:43:01 by zaz               #+#    #+#             */
-/*   Updated: 2019/07/02 18:33:56 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/19 23:12:42 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "op.h"
-#include "vm.h"
+#include "corewar/op.h"
+#include "corewar/instruction.h"
 
 /*
 ** 00b = Invalid

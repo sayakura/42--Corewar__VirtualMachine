@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 15:02:14 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/19 15:54:32 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/19 23:04:02 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ t_champ *ch_search_champion(t_vm *vm, int32_t id)
     }
     return (NULL);
 }
-
 
 /**
  *  parse the champion header into t_hdr
@@ -54,13 +53,13 @@ void    ch_parse_champ_header(t_hdr *hdr, int fd)
         PERROR("lseek");
     if (read(fd, hdr, sizeof(t_hdr)) != sizeof(t_hdr))
         PERROR("read");
-    rev_bytes(&hdr->magic, sizeof(hdr->magic));
+    h_rev_bytes(&hdr->magic, sizeof(hdr->magic));
 	if (hdr->magic != COREWAR_EXEC_MAGIC)
 	{
         printf("%x %x\n", hdr->magic, COREWAR_EXEC_MAGIC);
         ERROR("Invalid header\n");
     }
-    rev_bytes(&hdr->prog_size, sizeof(hdr->prog_size));
+    h_rev_bytes(&hdr->prog_size, sizeof(hdr->prog_size));
 	if (hdr->prog_size != siz - sizeof(t_hdr))
         ERROR("Invalid header\n");
 	if (hdr->prog_size > CHAMP_MAX_SIZE)
@@ -98,21 +97,19 @@ void    ch_load_champ(t_vm *vm, int fd)
     t_hdr               hdr;
     t_champ             *champ;
     static uint8_t      index;
-    //void                *pc;
+    t_byte              *pc;
 
     ch_parse_champ_header(&hdr, fd);
     champ = &(vm->corewar.champions[index]);
 	memcpy_(champ->name, hdr.prog_name, PROG_NAME_LENGTH);
 	memcpy_(champ->comment, hdr.comment, COMMENT_LENGTH);
     champ->id = index - 1;
-	champ->pc = &vm->memory[(MEM_SIZE / vm->corewar.nplayers) * index];
+	pc = &vm->memory[(MEM_SIZE / vm->corewar.nplayers) * index];
 	if (read(fd, pc, hdr.prog_size) != hdr.prog_size)
 		PERROR("read");
-
     p_init_process(vm, pc);
     LOG("* Player %d, weighing %d bytes, \"%s\" (\"%s\") !\n",  champ->id + 2, 
         hdr.prog_size, champ->name, champ->comment);
-
     index++;
     close(fd);
 }

@@ -6,14 +6,13 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/18 23:22:50 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/19 23:06:57 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
 #include "corewar/corewar.h"
 #include "corewar/process.h"
-
 
 void    print_mem(t_vm *vm)
 {
@@ -30,7 +29,7 @@ void    print_mem(t_vm *vm)
                 printf("\n");
             printf("%#06x : ", i);
         }
-        puthex(vm->memory[i]);
+        h_puthex(vm->memory[i]);
         printf(" ");
         i++;
     }

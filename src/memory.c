@@ -6,11 +6,12 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 20:01:05 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/18 22:08:56 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/20 18:50:04 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "vm.h"
+#include "corewar/corewar.h"
+#include "corewar/memory.h"
 
 /**
  *  check if the pointer exceeds the end of the map
@@ -21,8 +22,7 @@
  * @param {t_byte} pos - the memory position 
  *      that will be evaluated
  */
-
-t_byte *mem_pos(t_byte *pos)
+ t_byte *mem_pos(t_byte *pos)
 {
     if (pos > MAP_END)
         return (MAP_START + (pos - MAP_END));
@@ -57,7 +57,6 @@ void    mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt)
         *dst++ = *src++;
     }
 }
-
 /**
  *  read arg from the memory and place the result 
  *  into the buff
@@ -79,7 +78,6 @@ void    mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt)
  *      the address will be "% IDX_MOD"
  * 
  */
-
 void    read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far)
 {
     int32_t     tmp;
@@ -104,15 +102,3 @@ void    read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far)
             *buff = CP->registers[*buff];
     }
 }
-
-// void    read_m(void *fd, void *buff, unsigned int size)
-// {
-//     mem_oper(READ, (t_byte *)buff, (t_byte *)fd, size);
-//     rev_bytes(buff, size);
-// }
-
-// void    write_m(void *fd, void *buff, unsigned int size)
-// {
-//     mem_oper(WRITE, (t_byte *)fd, (t_byte *)buff, size);
-//     rev_bytes(fd, size);
-// }

@@ -4,6 +4,8 @@
         "console.h": "c",
         "basic.h": "c",
         "automated.h": "c",
-        "corewar.h": "c"
+        "corewar.h": "c",
+        "memory.h": "c",
+        "process.h": "c"
     }
 }

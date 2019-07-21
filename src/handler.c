@@ -128,11 +128,11 @@ void    ft_ld(t_vm *vm, t_instr *cinstr)
     (void)vm;
     XOR(EDI, EDI);
     mem_oper(READ, (t_byte *)&EDI, (t_byte *)&cinstr->arg[0].argv, 2);
-    // rev_bytes(&EDI, 4);
+    // h_rev_bytes(&EDI, 4);
     printf("--> EDI: %d\n", EDI);
 
     LD(EDI, &cinstr->arg[0]);
-    rev_bytes(&EDI, sizeof(EDI));
+    h_rev_bytes(&EDI, sizeof(EDI));
     XOR(ESI, ESI);
     LEA(ESI, &cinstr->arg[1]);
     MOV(REG(ESI), EDI);

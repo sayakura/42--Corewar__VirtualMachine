@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/19 16:03:25 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/19 23:03:50 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,28 +68,30 @@ void    p_init_process(t_vm *vm, void * pc)
     vm->nprocess++;
 }
 
-t_process   *p_create_process()
-{
-    t_process           *process;
-    static int32_t      pid = -1;
+// t_process   *p_create_process()
+// {
+//     t_process           *process;
+//     static int32_t      pid = -1;
 
-    process = malloc(sizeof(t_process));
-    bzero_(process, sizeof(t_process));
-    process->pid = pid;
-    process->registers[1] = pid;
-    return process;
-}
+//     process = malloc(sizeof(t_process));
+//     bzero_(process, sizeof(t_process));
+//     process->pid = pid;
+//     process->registers[1] = pid;
+//     return process;
+// }
 
-void    p_spawn_process(t_champ *champion, t_process *process_list)
-{
-    t_process   *p;
+// void    p_spawn_process(t_champ *champion, t_process *process_list)
+// {
+//     t_process   *p;
 
-    FOR_EACH(champ, champion)
-    {
-        p = p_create_process();
-        p->pc = champ->pc;
-    }
-}
+//     FOR_EACH(champ, champion)
+//     {
+//         p = p_create_process();
+//         p->pc = champ->pc;
+//         LOG("* Player %d, weighing %d bytes, \"%s\" (\"%s\") !\n",  champ->id + 2, 
+//         hdr.prog_size, champ->name, champ->comment);
+//     }
+// }
 
 /**
  *  a sys call for lfork
@@ -212,10 +214,10 @@ void    process_loop(t_vm   *vm)
                 printf("Pid: %d\n", cp->pid);
                 printf("Cycle: %d\n", vm->corewar.cycle);
                 if (vm->debug_mode)
-                    print_register(cp);
+                    h_print_register(cp);
                 instruction_cycle(vm, cp);
                  if (vm->debug_mode)
-                    print_register(cp);
+                    h_print_register(cp);
                 printf("%p %x\n", cp->pc, *(cp->pc));
                 printf("---------------\n");
                 r_cycles[cp->pid + 1] ^= r_cycles[cp->pid + 1];
