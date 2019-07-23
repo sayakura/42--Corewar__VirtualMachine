@@ -6,12 +6,11 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/14 20:52:52 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/17 20:09:16 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/22 09:37:58 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <CUnit/CUnit.h>
-#include <CUnit/Basic.h>
+#include "../include/test.h"
 
 int maxi(int i1, int i2)
 {
@@ -26,10 +25,10 @@ void test_maxi(void)
 void    run_unit_tesing()
 {
     CU_initialize_registry();
-    CU_pSuite suite = CU_add_suite("suit name", 0, 0);
+    CU_pSuite helper_c = CU_add_suite("helper.c", 0, 0);
 
-    CU_add_test(suite, "test if maxi function return the correct value", test_maxi);
-
+    test_helper(&helper_c);
+    // CU_add_test(suite, "test if maxi function return the correct value", test_maxi);
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

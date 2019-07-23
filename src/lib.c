@@ -22,7 +22,7 @@ void		perror_(const char *s)
 	
 	if (errno < 0)
         write(2, UNKNOWN_ERROR, strlen_(UNKNOWN_ERROR));
-	else
+	else 
 	{
         str = strerror(errno);
         write(2, str, strlen_(str));

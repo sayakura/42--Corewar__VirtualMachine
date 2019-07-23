@@ -1,21 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memory.h                                           :+:      :+:    :+:   */
+/*   helper.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/17 20:30:21 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/22 08:58:31 by qpeng            ###   ########.fr       */
+/*   Created: 2019/07/22 08:27:46 by qpeng             #+#    #+#             */
+/*   Updated: 2019/07/22 08:47:12 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MEMORY_H
-#define MEMORY_H
-#include "define.h"
+#ifndef  HELPER_H
+#define HELPER_H
 
-t_byte      *mem_pos(t_byte *pos);
-void        mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
-void        read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far);
+#include <unistd.h>
+// #include "corewar/process.h"
 
-#endif 
+void	ft_putchar(char c);
+void    h_rev_bytes(void *ptr, size_t n);
+// void    h_print_register(t_process *cp);
+void	h_puthex(unsigned char c);
+
+#endif // ! HELPER_H
