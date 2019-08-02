@@ -6,11 +6,11 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/18 22:41:17 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "corewar/corewar.h"
+#include "vm.h"
 #include <stdio.h>
 
 int     main(int ac, char **av)

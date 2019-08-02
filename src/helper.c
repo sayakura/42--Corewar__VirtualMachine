@@ -6,11 +6,11 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 23:01:36 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/19 23:04:08 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "corewar/corewar.h"
+#include "vm.h"
 
 void    h_rev_bytes(void *ptr, size_t n)
 {

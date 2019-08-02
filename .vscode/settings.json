@@ -6,6 +6,7 @@
         "automated.h": "c",
         "corewar.h": "c",
         "memory.h": "c",
-        "process.h": "c"
+        "process.h": "c",
+        "vm.h": "c"
     }
 }

@@ -6,13 +6,11 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/19 23:03:50 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "corewar/process.h"
-#include "corewar/corewar.h"
-#include "corewar/instruction.h"
+#include "vm.h"
 
 static t_instr_hdlr instr_funptr[] = {
     ft_live,
@@ -195,7 +193,7 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
 }
 
 
-void    process_loop(t_vm   *vm)
+void    p_process_loop(t_vm   *vm)
 {
     t_process       *cp;
     static uint32_t r_cycles[MAX_PLAYERS + 1];

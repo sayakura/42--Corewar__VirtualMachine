@@ -6,7 +6,7 @@
 #    By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/16 23:19:51 by qpeng             #+#    #+#              #
-#    Updated: 2019/07/17 20:14:16 by qpeng            ###   ########.fr        #
+#    Updated: 2019/08/01 19:07:55 by qpeng            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,9 +17,9 @@ SRC = champion.c\
 		loader.c\
 		main.c\
 		memory.c\
-		init.c\
 		op.c\
-		process.c
+		process.c\
+		corewar.c
 
 FILES = $(addprefix src/, $(SRC))
 

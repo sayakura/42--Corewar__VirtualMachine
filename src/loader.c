@@ -6,13 +6,12 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/19 23:06:57 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <math.h>
-#include "corewar/corewar.h"
-#include "corewar/process.h"
+#include "vm.h"
 
 void    print_mem(t_vm *vm)
 {

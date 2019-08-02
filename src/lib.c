@@ -2,7 +2,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
-
+#include "vm.h"
 
 #define UNKNOWN_ERROR "Unknown error"
   

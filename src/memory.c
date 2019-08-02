@@ -6,12 +6,11 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 20:01:05 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/20 18:50:04 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "corewar/corewar.h"
-#include "corewar/memory.h"
+#include "vm.h"
 
 /**
  *  check if the pointer exceeds the end of the map
@@ -45,7 +44,6 @@
  * @param {uint8_t} cnt - length of the buffer
  * 
  */
-
 void    mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt)
 {
     while (cnt--)
@@ -57,6 +55,7 @@ void    mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt)
         *dst++ = *src++;
     }
 }
+
 /**
  *  read arg from the memory and place the result 
  *  into the buff

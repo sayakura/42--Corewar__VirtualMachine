@@ -6,11 +6,11 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 15:02:14 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/19 23:04:02 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/01 19:23:30 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "corewar/corewar.h"
+#include "vm.h"
 
 /**
  *  search through process list, find 
@@ -104,6 +104,7 @@ void    ch_load_champ(t_vm *vm, int fd)
 	memcpy_(champ->name, hdr.prog_name, PROG_NAME_LENGTH);
 	memcpy_(champ->comment, hdr.comment, COMMENT_LENGTH);
     champ->id = index - 1;
+    printf("%d %d %d\n", MEM_SIZE, vm->corewar.nplayers, index); 
 	pc = &vm->memory[(MEM_SIZE / vm->corewar.nplayers) * index];
 	if (read(fd, pc, hdr.prog_size) != hdr.prog_size)
 		PERROR("read");

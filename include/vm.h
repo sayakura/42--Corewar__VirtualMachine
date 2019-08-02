@@ -1,3 +1,4 @@
+  
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -6,7 +7,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:06 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/19 23:09:05 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/07/13 17:30:30 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +36,10 @@
                             typeof(*(array)) *item;\
                             while ((item = start) && start++ != end )
 # define READ_FROM_MEM(a, b, c, d) mem_oper(READ, (t_byte *)b, a, c); if (d) h_rev_bytes(b, c);
-# define WRITE_TO_MEM(a, b, c, d) if(d == LITTLE_E)h_rev_bytes(a, c); mem_oper(WRITE, (t_byte *)a, (t_byte *)b, c); ;
+# define WRITE_TO_MEM(a, b, c, d) if(d == LITTLE_E) h_rev_bytes(a, c); mem_oper(WRITE, (t_byte *)a, (t_byte *)b, c);
 # define READ_(i, b, c)  READ_FROM_MEM(i, b, c, BIG_E);
 # define WRITE_(i, b, c)  WRITE_TO_MEM(i, b, c, LITTLE_E);
-# define MEM_POX(a) mem_pos(a)
+# define MEM_POX(a) mem_pos(a) 
 # define REL(pc, offset) MEM_POX(pc + (offset % IDX_MOD))
 # define ABS(pc, offset)  MEM_POX(pc + offset)
 # define LOG printf
@@ -55,7 +56,6 @@
 # define OR(reg1, reg2) reg1 |= reg2
 # define XOR(reg1, reg2) reg1 ^= reg2
 # define MOV(r1, r2) WRITE_(&r1, &r2, 4);
-// # define MOV
 # define PC g_cur_process->cpc
 # define CP g_cur_process
 # define INSTR g_op_tab
@@ -72,12 +72,6 @@ typedef enum e_mem_op
 	READ,
 	WRITE
 }			t_mem_op;
-
-// typedef struct 		s_cpu
-// {
-// 	t_arg_type   argvt[MAX_ARGS_NUMBER];
-//     uint8_t      *argv[MAX_ARGS_NUMBER];
-// }					t_cpu;
 
 typedef struct		s_op
 {
@@ -164,44 +158,40 @@ typedef struct 		s_instr
 	t_process		*context;
 }					t_instr;
 
-
 typedef void(*t_instr_hdlr)(t_vm *, t_instr *);
 
 extern t_op g_op_tab[17];
 extern uint8_t	*g_base;
 extern t_process *g_cur_process;
 
+// corewar 
+void    		cw_start(int ac, char **av);
+
 // parser
-void			parse_champ_header(t_hdr *hdr, int fd);
+void			ch_parse_champ_header(t_hdr *hdr, int fd);
 
 // helper 
 void    		h_rev_bytes(void *ptr, size_t n);
 void			h_puthex(unsigned char c);
-
+void    		h_print_register(t_process *cp);
 void    		print_mem(t_vm *vm);
 void			bzero_(void *rsi, size_t rcx);
 //loader
 void    		loader(t_vm *vm, char *filename);
 
 //process
-void    		process_loop(t_vm   *vm);
+void            p_init_process(t_vm *vm, void * pc);
+void    		p_process_loop(t_vm   *vm);
 void    		p_fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far);
 
 // champion
-t_champ			*search_champion(t_vm *vm, int32_t id);
-
+t_champ			*ch_search_champion(t_vm *vm, int32_t id);
+void            ch_load_champ(t_vm *vm, int fd);
 
 // memory 
-
 t_byte 			*mem_pos(t_byte *pos);
 void 			mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
 void    		read_m(void *fd, void *buff, unsigned int size);
 void    		write_m(void *fd, void *buff, unsigned int size);
 void    		read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far);
-
-
-void    cleanup(t_vm *vm);
-void    read_args(t_vm *vm, int ac, char **av);
-void    run(t_vm *vm);
-void    init(int ac, char **av);
 #endif

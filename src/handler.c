@@ -1,4 +1,5 @@
-#include "handler.h"
+#include "vm.h"
+
 t_process *g_cur_process;
 
 void    ft_live(t_vm *vm, t_instr *cinstr)
@@ -8,7 +9,7 @@ void    ft_live(t_vm *vm, t_instr *cinstr)
 
     READ_(cinstr->arg[0].argv, &id, 4);
                                                            printf("Champion id: %d\n", id);
-    champ = search_champion(vm, id);                                                  printf("at cycle: %d\n", vm->corewar.cycle);
+    champ = ch_search_champion(vm, id);                                                  printf("at cycle: %d\n", vm->corewar.cycle);
     if (!champ)
         return ;
     LOG("Player %d (%s) is said to be alive\n", champ->id + 2, champ->name);

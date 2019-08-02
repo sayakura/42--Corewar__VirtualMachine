@@ -6,14 +6,13 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/07/22 08:22:53 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <string.h>
-#include "corewar/corewar.h"
-#include "corewar/process.h"
+#include "vm.h"
 
 t_byte	*g_base;
 
@@ -29,7 +28,7 @@ void    cw_run(t_vm *vm)
         ++vm->corewar.cycle;
         if (++vm->corewar.cycle > vm->corewar.dump_cycle)
             print_mem(vm);
-        process_loop(vm);
+        p_process_loop(vm);
         if (vm->corewar.cycle > vm->corewar.kill_cycle)
             printf("start killing!\n");
         if (!vm->nprocess)
