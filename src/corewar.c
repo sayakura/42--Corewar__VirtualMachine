@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/01 20:05:07 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ void    cw_env_init(t_vm *vm)
 {
     bzero_(vm, sizeof(t_vm));
     vm->debug_mode = 1;
+    vm->corewar.nplayers = 1;
     g_base = vm->memory;
     setbuf(stdout, NULL);
 }
