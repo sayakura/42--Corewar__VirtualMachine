@@ -6,7 +6,7 @@
 /*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/03 13:00:14 by anjansse         ###   ########.fr       */
+/*   Updated: 2019/08/03 15:59:35 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void    cw_start(int ac, char **av)
     
     if (ac < 2)
     {
-        printf("usage\n");
+        printf("usage: ./vm <champ1, ...>\n");
         exit(EXIT_SUCCESS);
     }
     cw_env_init(&vm);

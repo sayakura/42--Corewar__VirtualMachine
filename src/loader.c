@@ -6,7 +6,7 @@
 /*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/03 15:35:56 by anjansse         ###   ########.fr       */
+/*   Updated: 2019/08/03 16:03:26 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void    print_mem(t_vm *vm, t_gui *gui)
     x = -2;
     y = 1;
     siz = (unsigned)sqrt(MEM_SIZE);
-    while (i < 100) // < MEM_SZIE
+    while (i < MEM_SIZE) // < MEM_SZIE
     {
         if (x == MAX_X - 3)
         {
