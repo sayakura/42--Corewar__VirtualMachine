@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/03 16:31:01 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void    p_init_process(t_vm *vm, void * pc)
     process->registers[1] = pid;
     printf("initing... pid: %d\n", pid);
     pid++;
+    printf("%x\n", process);
     if (vm->process_list)
         process->next = vm->process_list;
     vm->process_list = process;

@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/03 15:37:20 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void    print_mem(t_vm *vm)
 
     i = 0;
     siz = (unsigned)sqrt(MEM_SIZE);
-    while (i < 100) // < MEM_SZIE
+    while (i < 100) // < MEM_SIZE
     {
         if (i % siz == 0)
         {
