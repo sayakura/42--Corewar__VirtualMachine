@@ -50,7 +50,6 @@
 # define EDI g_cur_process->registers[1]
 # define ESI g_cur_process->registers[2]
 # define ECX g_cur_process->registers[3]
-# define EDX g_cur_process->registers[4]
 # define ADD(reg1, reg2) reg1 += reg2
 # define SUB(reg1, reg2) reg1 -= reg2
 # define AND(reg1, reg2) reg1 &= reg2
@@ -61,6 +60,8 @@
 # define CP g_cur_process
 # define INSTR g_op_tab
 # define REG(i) g_cur_process->registers[i]
+# define MAX_X 175
+# define MAX_Y 75
 
 typedef enum e_endianess
 {
@@ -159,6 +160,10 @@ typedef struct 		s_instr
 	t_process		*context;
 }					t_instr;
 
+typedef struct  	s_gui {
+    WINDOW      	*win;
+}               	t_gui;
+
 typedef void(*t_instr_hdlr)(t_vm *, t_instr *);
 
 extern t_op g_op_tab[17];
@@ -173,16 +178,16 @@ void			ch_parse_champ_header(t_hdr *hdr, int fd);
 
 // helper 
 void    		h_rev_bytes(void *ptr, size_t n);
-void			h_puthex(unsigned char c);
+void			h_puthex(unsigned char c, t_gui *gui, int x, int y);
 void    		h_print_register(t_process *cp);
-void    		print_mem(t_vm *vm);
+void    		print_mem(t_vm *vm, t_gui *gui);
 void			bzero_(void *rsi, size_t rcx);
 //loader
 void    		loader(t_vm *vm, char *filename);
 
 //process
 void            p_init_process(t_vm *vm, void * pc);
-void    		p_process_loop(t_vm   *vm);
+void    		p_process_loop(t_vm   *vm, t_gui *gui);
 void    		p_fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far);
 
 // champion
@@ -195,4 +200,11 @@ void 			mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt);
 void    		read_m(void *fd, void *buff, unsigned int size);
 void    		write_m(void *fd, void *buff, unsigned int size);
 void    		read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far);
+
+/* GRAPHIC USER INTERFACE FUNCTIONS */
+
+void            init_screen(t_gui *gui);
+void            end_screen(void);
+char            update_screen(t_gui *gui);
+
 #endif

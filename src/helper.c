@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helper.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
+/*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/19 23:01:36 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/03 15:27:22 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,17 @@ void	ft_putchar(char c)
 	write (1, &c, 1);
 }
 
-void	h_puthex(unsigned char c)
+void	h_puthex(unsigned char c, t_gui *gui, int x, int y)
 {
+	// (void)c;
     static char    *base = "0123456789abcdef";
 
-	ft_putchar(base[c / 16]);
-	ft_putchar(base[c % 16]);
+	// ft_putchar(base[c / 16]);
+	// ft_putchar(base[c % 16]);
+	init_pair(1, COLOR_GREEN, COLOR_BLACK);
+    wattron(gui->win, COLOR_PAIR(1));
+	mvwprintw(gui->win, y, x, "%c%c ", base[c / 16], base[c % 16]);
+	wattroff(gui->win, COLOR_PAIR(1));
 }
 
 void    h_print_register(t_process *cp)

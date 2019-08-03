@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   champion.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
+/*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 15:02:14 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/01 19:23:30 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/02 12:34:33 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,13 +104,14 @@ void    ch_load_champ(t_vm *vm, int fd)
 	memcpy_(champ->name, hdr.prog_name, PROG_NAME_LENGTH);
 	memcpy_(champ->comment, hdr.comment, COMMENT_LENGTH);
     champ->id = index - 1;
-    printf("%d %d %d\n", MEM_SIZE, vm->corewar.nplayers, index); 
+    //printf("%d %d %d\n", MEM_SIZE, vm->corewar.nplayers, index);
+    //printf("N_PLAYERS: %d\n", vm->corewar.nplayers); 
 	pc = &vm->memory[(MEM_SIZE / vm->corewar.nplayers) * index];
 	if (read(fd, pc, hdr.prog_size) != hdr.prog_size)
 		PERROR("read");
     p_init_process(vm, pc);
-    LOG("* Player %d, weighing %d bytes, \"%s\" (\"%s\") !\n",  champ->id + 2, 
-        hdr.prog_size, champ->name, champ->comment);
+    //LOG("* Player %d, weighing %d bytes, \"%s\" (\"%s\") !\n",  champ->id + 2, 
+      //  hdr.prog_size, champ->name, champ->comment);
     index++;
     close(fd);
 }

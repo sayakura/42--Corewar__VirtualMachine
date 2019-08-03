@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   corewar.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
+/*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/03 12:43:54 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/03 13:00:14 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,38 @@
 t_byte	*g_base;
 
 /**
- *  run corewar game
+ *  run corewar game && initialize GUI if flag (-n) enabled.
  * 
  *  @param {t_vm} vm - vm struct 
  */
 void    cw_run(t_vm *vm)
 {
+    t_gui       *gui;
+    char        c;
+
+    gui = malloc(sizeof(t_gui));
+    init_screen(gui);
     while (1)
     {
+        if ((c = update_screen(gui)) == 27)
+            break ;
         ++vm->corewar.cycle;
-        if (++vm->corewar.cycle == vm->corewar.dump_cycle)
-            print_mem(vm);
-        p_process_loop(vm);
+        if (++vm->corewar.cycle > vm->corewar.dump_cycle)
+        {
+           print_mem(vm, gui);
+        }
+        //usleep(15000);
+        p_process_loop(vm, gui);
         if (vm->corewar.cycle > vm->corewar.kill_cycle)
-            ;//printf("start killing!\n");
+            //printf("start killing!\n");
         if (!vm->nprocess)
             ERROR("some one win!");
-        if (vm->corewar.cycle > 1000)
-            break ;
+        // if (vm->corewar.cycle > 1000)
+            // break ;
     }
+    end_screen();
+    free(gui);
+    // printf("Ended screen properly.\n");
 }
 
 /**

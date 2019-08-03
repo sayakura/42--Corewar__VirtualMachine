@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
+/*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/03 12:38:45 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void    p_init_process(t_vm *vm, void * pc)
     process->pc = pc;
     process->pid = pid;
     process->registers[1] = pid;
-    printf("initing... pid: %d\n", pid);
+    //printf("initing... pid: %d\n", pid);
     pid++;
     if (vm->process_list)
         process->next = vm->process_list;
@@ -189,11 +189,11 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
     }
     g_cur_process = cp;
     (instr_funptr[i.instr - 1])(vm, &i);
-    print_mem(vm);
+    //print_mem(vm);
 }
 
 
-void    p_process_loop(t_vm   *vm)
+void    p_process_loop(t_vm   *vm, t_gui *gui)
 {
     t_process       *cp;
     static uint32_t r_cycles[MAX_PLAYERS + 1];
@@ -209,15 +209,15 @@ void    p_process_loop(t_vm   *vm)
             r_cycles[cp->pid + 1]--;
             if (!r_cycles[cp->pid + 1])
             {
-                printf("Pid: %d\n", cp->pid);
-                printf("Cycle: %d\n", vm->corewar.cycle);
+                //printf("Pid: %d\n", cp->pid);
+                //printf("Cycle: %d\n", vm->corewar.cycle);
                 if (vm->debug_mode)
-                    h_print_register(cp);
+                    //h_print_register(cp);
                 instruction_cycle(vm, cp);
                  if (vm->debug_mode)
-                    h_print_register(cp);
-                printf("%p %x\n", cp->pc, *(cp->pc));
-                printf("---------------\n");
+                    //h_print_register(cp);
+                //printf("%p %x\n", cp->pc, *(cp->pc));
+                //printf("---------------\n");
                 r_cycles[cp->pid + 1] ^= r_cycles[cp->pid + 1];
             }
         }
