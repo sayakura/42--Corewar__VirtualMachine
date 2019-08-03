@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/01 20:05:07 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/03 12:43:54 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ void    cw_run(t_vm *vm)
     while (1)
     {
         ++vm->corewar.cycle;
-        if (++vm->corewar.cycle > vm->corewar.dump_cycle)
+        if (++vm->corewar.cycle == vm->corewar.dump_cycle)
             print_mem(vm);
         p_process_loop(vm);
         if (vm->corewar.cycle > vm->corewar.kill_cycle)
-            printf("start killing!\n");
+            ;//printf("start killing!\n");
         if (!vm->nprocess)
             ERROR("some one win!");
         if (vm->corewar.cycle > 1000)

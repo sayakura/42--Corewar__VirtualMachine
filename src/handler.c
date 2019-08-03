@@ -68,7 +68,7 @@ void    ft_or(t_vm *vm, t_instr *cinstr)
     LD(ESI, &cinstr->arg[1]);
     OR(EDI, ESI);
     MOV(ECX, EDI);
-    CP->carry = !ECX;           printf("[or] and: [ %d | %d | %d ]\n", EDI, ESI, ECX);
+    CP->carry = !ECX;           printf("[or] or: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
 void    ft_xor(t_vm *vm, t_instr *cinstr)
@@ -104,14 +104,28 @@ void    ft_ldi(t_vm *vm, t_instr *cinstr)
     printf("[ldi] argv: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
+
+/**
+ *  Opcode 11. Take a registry, and two indexes (potentially registries) add the
+ *  two indexes, and use this result as an address where the value of the first parameter
+ *  will be copied.
+ *  1. load the index of the register to edx (we are not using edi since we need to copy
+ *  the content of edi to the targeted address later, and we dont wannat overwrite it)
+ *  2. load the value of the second parameter into esi, the second paramter can be reg
+ *  indirect, or direct. 
+ *  3. load the value of the third parameter into ecx, the third paramter can be reg
+ *  indirect, or direct. 
+ *  4. add esi and ecx and store the result into esi, which will represents the address 
+ *  5. copy the content at registers[edx] to address(esi)
+*/
 void    ft_sti(t_vm *vm, t_instr *cinstr)
 {
-    (void)vm;
-    LD(EDI, &cinstr->arg[0]);
-    LD(ESI, &cinstr->arg[1]);
-    LD(ECX, cinstr->arg + 2);
+    (void)vm;                               int debug; 
+    LEA(EDX, &cinstr->arg[0]);
+    LD(ESI, &cinstr->arg[1]);               debug = ESI;
+    LD(ECX, &cinstr->arg[2]);
     ADD(ESI, ECX);
-    MOV(*REL(PC, ESI), EDI);        printf("[sti] argv: [ %d | %d | %d ]\n", EDI, ESI, ECX);
+    MOV(*REL(PC, ESI), REG(EDX));           printf("[sti] data %d, at index %d + %d\n", REG(EDX), debug, ECX);
 }
 
 void    ft_fork(t_vm *vm, t_instr *cinstr)
