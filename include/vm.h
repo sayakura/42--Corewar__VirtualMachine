@@ -162,9 +162,9 @@ typedef struct 		s_instr
 
 typedef void(*t_instr_hdlr)(t_vm *, t_instr *);
 
-extern t_op g_op_tab[17];
-extern uint8_t	*g_base;
-extern t_process *g_cur_process;
+extern t_op			g_op_tab[17];
+extern uint8_t		*g_base;
+extern t_process	*g_cur_process;
 
 // corewar 
 void    		cw_start(int ac, char **av);

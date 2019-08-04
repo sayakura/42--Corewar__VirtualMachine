@@ -104,7 +104,6 @@ void    ft_ldi(t_vm *vm, t_instr *cinstr)
     printf("[ldi] argv: [ %d | %d | %d ]\n", EDI, ESI, ECX);
 }
 
-
 /**
  *  Opcode 11. Take a registry, and two indexes (potentially registries) add the
  *  two indexes, and use this result as an address where the value of the first parameter
