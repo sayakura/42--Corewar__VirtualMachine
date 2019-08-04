@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/03 16:31:01 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/03 17:47:41 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,7 @@ void    p_init_process(t_vm *vm, void * pc)
     process->pc = pc;
     process->pid = pid;
     process->registers[1] = pid;
-    printf("initing... pid: %d\n", pid);
     pid++;
-    printf("%x\n", process);
     if (vm->process_list)
         process->next = vm->process_list;
     vm->process_list = process;
@@ -196,33 +194,33 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
 
 void    p_process_loop(t_vm   *vm)
 {
-    t_process       *cp;
+    t_process       *curr_p;
     static uint32_t r_cycles[MAX_PLAYERS + 1];
     
-    cp = vm->process_list;
-    while (cp)
+    curr_p = vm->process_list;
+    while (curr_p)
     {
-        //printf("current cycle: %d l: %d, %d\n", vm->corewar.cycle, r_cycles[cp->pid + 1], *(cp->pc));
-        if (*(cp->pc) && *(cp->pc) <= 16)
+        //printf("current cycle: %d l: %d, %d\n", vm->corewar.cycle, r_cycles[curr_p->pid + 1], *(curr_p->pc));
+        if (*(curr_p->pc) && *(curr_p->pc) <= 16)
         {
-            if (!r_cycles[cp->pid + 1])
-                r_cycles[cp->pid + 1] = INSTR[*(cp->pc) - 1].cycles;
-            r_cycles[cp->pid + 1]--;
-            if (!r_cycles[cp->pid + 1])
+            if (!r_cycles[curr_p->pid + 1])
+                r_cycles[curr_p->pid + 1] = INSTR[*(curr_p->pc) - 1].cycles;
+            r_cycles[curr_p->pid + 1]--;
+            if (!r_cycles[curr_p->pid + 1])
             {
-                printf("Pid: %d\n", cp->pid);
+                printf("Pid: %d\n", curr_p->pid);
                 printf("Cycle: %d\n", vm->corewar.cycle);
                 if (vm->debug_mode)
-                    h_print_register(cp);
-                instruction_cycle(vm, cp);
+                    h_print_register(curr_p);
+                instruction_cycle(vm, curr_p);
                  if (vm->debug_mode)
-                    h_print_register(cp);
-                printf("%p %x\n", cp->pc, *(cp->pc));
+                    h_print_register(curr_p);
+                printf("%p %x\n", curr_p->pc, *(curr_p->pc));
                 printf("---------------\n");
-                r_cycles[cp->pid + 1] ^= r_cycles[cp->pid + 1];
+                r_cycles[curr_p->pid + 1] ^= r_cycles[curr_p->pid + 1];
             }
         }
-        cp = cp->next;
+        curr_p = curr_p->next;
     }
 }
 // .name "zork"
