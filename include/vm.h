@@ -106,6 +106,7 @@ typedef struct      s_champ
 	int32_t			id;
 	char			name[PROG_NAME_LENGTH + 1];
 	char			comment[COMMENT_LENGTH + 1];
+	uint32_t		prog_size;
 	uint32_t		lives;
 	uint32_t 		last_live;
 }                   t_champ;
