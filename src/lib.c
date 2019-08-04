@@ -77,4 +77,12 @@ void        *memcpy_(void *dst, const void *src, size_t n)
 	return (dst);
 }
 
- 
+void		*memset_(void *b, int c, size_t len)
+{
+	unsigned char	*ptr;
+
+	ptr = (unsigned char *)b;
+	while (len--)
+		*ptr++ = c;
+	return (b);
+}

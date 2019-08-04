@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 15:02:14 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/03 19:16:52 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/04 15:06:01 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,10 +104,10 @@ void    ch_load_champ(t_vm *vm, int fd)
 	memcpy_(champ->name, hdr.prog_name, PROG_NAME_LENGTH);
 	memcpy_(champ->comment, hdr.comment, COMMENT_LENGTH);
     champ->id = index - 1;
-    printf("%d %d %d\n", MEM_SIZE, vm->corewar.nplayers, index); 
 	pc = &vm->memory[(MEM_SIZE / vm->corewar.nplayers) * index];
 	if (read(fd, pc, hdr.prog_size) != hdr.prog_size)
 		PERROR("read");
+    memset_(&vm->owner[(MEM_SIZE / vm->corewar.nplayers) * index], champ->id, hdr.prog_size);
     champ->prog_size = hdr.prog_size;
     p_init_process(vm, pc);
     LOG("* Player %d, weighing %d bytes, \"%s\" (\"%s\") !\n",  champ->id + 2, 

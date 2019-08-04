@@ -30,6 +30,7 @@
 #define INDIRECT_TYPE 0b11000000
 #define GET_ACB_TYPE(acb) (acb & 0b11000000)
 # define MAP_START g_base
+# define OWNER_START g_ownerbase
 # define MAP_END g_base + MEM_SIZE
 #define FOR_EACH(item, array) typeof(*(array)) *start = array;\
                             typeof(*(array)) *end = (start + (sizeof(array) / sizeof*(array)) + 1);\
@@ -137,6 +138,7 @@ typedef struct      s_cw
 typedef struct      s_vm
 {
 	uint8_t			memory[MEM_SIZE];
+	uint8_t			owner[MEM_SIZE];
     t_process       *process_list;
 	uint8_t			nprocess;
     t_cw            corewar;
@@ -164,6 +166,7 @@ typedef void(*t_instr_hdlr)(t_vm *, t_instr *);
 
 extern t_op			g_op_tab[17];
 extern uint8_t		*g_base;
+extern uint8_t		*g_ownerbase;
 extern t_process	*g_cur_process;
 
 // corewar 
@@ -178,6 +181,7 @@ void			h_puthex(unsigned char c);
 void    		h_print_register(t_process *cp);
 void    		print_mem(t_vm *vm);
 void			bzero_(void *rsi, size_t rcx);
+void			*memset_(void *b, int c, size_t len);
 //loader
 void    		loader(t_vm *vm, char *filename);
 

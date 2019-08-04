@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 20:01:05 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/03 14:00:07 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/04 15:11:33 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,19 @@
  */
 void    mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt)
 {
+    off_t   offset;
+    
     while (cnt--)
     {
         if (op == READ)
             src =  src + 1 > MAP_END ? MAP_START : src;
         else 
             dst = dst + 1 > MAP_END ? MAP_START : dst;
+        if (dst > MAP_START && dst < MAP_END)
+        {
+            offset = MAP_START - dst;
+            *(OWNER_START + offset) = CP->champion->id;
+        }
         *dst++ = *src++;
     }
 }
