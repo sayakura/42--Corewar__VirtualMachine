@@ -50,6 +50,7 @@
 # define EDI g_cur_process->registers[1]
 # define ESI g_cur_process->registers[2]
 # define ECX g_cur_process->registers[3]
+# define EDX g_cur_process->registers[4]
 # define ADD(reg1, reg2) reg1 += reg2
 # define SUB(reg1, reg2) reg1 -= reg2
 # define AND(reg1, reg2) reg1 &= reg2
@@ -107,6 +108,7 @@ typedef struct      s_champ
 	int32_t			id;
 	char			name[PROG_NAME_LENGTH + 1];
 	char			comment[COMMENT_LENGTH + 1];
+	uint32_t		prog_size;
 	uint32_t		lives;
 	uint32_t 		last_live;
 }                   t_champ;

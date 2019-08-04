@@ -6,7 +6,7 @@
 /*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/03 15:59:35 by anjansse         ###   ########.fr       */
+/*   Updated: 2019/08/03 18:02:15 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,7 @@ void    cw_run(t_vm *vm)
             break ;
         ++vm->corewar.cycle;
         if (++vm->corewar.cycle > vm->corewar.dump_cycle)
-        {
            print_mem(vm, gui);
-        }
         //usleep(15000);
         p_process_loop(vm, gui);
         if (vm->corewar.cycle > vm->corewar.kill_cycle)
@@ -79,14 +77,14 @@ void    cw_read_args(t_vm *vm, int ac, char **av)
  */
 void    cw_cleanup(t_vm *vm)
 {
-    t_process *tmp;
+    // t_process *tmp;
     
-    tmp = vm->process_list;
-    while (tmp)
-    {
-        tmp = tmp->next;
-        free(tmp);
-    }
+    // tmp = vm->process_list;
+    // while (tmp)
+    // {
+    //     tmp = tmp->next;
+    //     free(tmp);
+    // }
 }
 
 /**
@@ -95,11 +93,11 @@ void    cw_cleanup(t_vm *vm)
  * 
  *  @param {t_vm} vm - vm struct 
  */
-void    cw_env_init(t_vm *vm)
+void    cw_env_init(t_vm *vm, int nplayers)
 {
     bzero_(vm, sizeof(t_vm));
     vm->debug_mode = 1;
-    vm->corewar.nplayers = 1;
+    vm->corewar.nplayers = nplayers;
     g_base = vm->memory;
     setbuf(stdout, NULL);
 }
@@ -120,7 +118,7 @@ void    cw_start(int ac, char **av)
         printf("usage: ./vm <champ1, ...>\n");
         exit(EXIT_SUCCESS);
     }
-    cw_env_init(&vm);
+    cw_env_init(&vm, ac - 1);
     cw_read_args(&vm, ac, av);
     cw_run(&vm);
     cw_cleanup(&vm);
