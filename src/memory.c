@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   memory.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
+/*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/29 20:01:05 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/01 19:09:53 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/05 13:01:53 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,19 @@
  */
 void    mem_oper(t_mem_op op, t_byte *dst, t_byte *src, uint8_t cnt)
 {
+    off_t   offset;
+
     while (cnt--)
     {
         if (op == READ)
             src =  src + 1 > MAP_END ? MAP_START : src;
         else 
             dst = dst + 1 > MAP_END ? MAP_START : dst;
+        if (dst > MAP_START && dst < MAP_END)
+        {
+            offset = dst - MAP_START;
+            *(OWNER_START + offset) = CP->champion->id;
+        }
         *dst++ = *src++;
     }
 }

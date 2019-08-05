@@ -6,7 +6,7 @@
 /*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/03 17:56:46 by anjansse         ###   ########.fr       */
+/*   Updated: 2019/08/05 13:03:23 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static t_instr_hdlr instr_funptr[] = {
  * @param {void *} pc - current program counter
  * 
  */
-void    p_init_process(t_vm *vm, void * pc)
+void    p_init_process(t_vm *vm, void * pc, t_champ *champ)
 {
     t_process           *process;
     static int32_t      pid = -1;
@@ -58,6 +58,7 @@ void    p_init_process(t_vm *vm, void * pc)
     process->pc = pc;
     process->pid = pid;
     process->registers[1] = pid;
+    process->champion = champ;
     //printf("initing... pid: %d\n", pid);
     pid++;
     if (vm->process_list)
