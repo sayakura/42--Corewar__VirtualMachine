@@ -46,5 +46,5 @@ void            init_screen(t_gui *gui)
     nodelay(gui->win, true);
     box(gui->win, 0, 0);
     keypad(gui->win, true);
-    fill_map(gui);
+  //  fill_map(gui);
 }
