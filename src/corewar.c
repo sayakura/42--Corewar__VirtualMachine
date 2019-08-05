@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/04 15:10:25 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/04 15:50:36 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void    cw_env_init(t_vm *vm, int nplayers)
     vm->corewar.nplayers = nplayers;
     MAP_START = vm->memory;
     OWNER_START = vm->owner;
+    memset_(OWNER_START, 7, MEM_SIZE);
     setbuf(stdout, NULL);
 }
 

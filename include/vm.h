@@ -138,7 +138,7 @@ typedef struct      s_cw
 typedef struct      s_vm
 {
 	uint8_t			memory[MEM_SIZE];
-	uint8_t			owner[MEM_SIZE];
+	int8_t			owner[MEM_SIZE];
     t_process       *process_list;
 	uint8_t			nprocess;
     t_cw            corewar;
@@ -166,7 +166,7 @@ typedef void(*t_instr_hdlr)(t_vm *, t_instr *);
 
 extern t_op			g_op_tab[17];
 extern uint8_t		*g_base;
-extern uint8_t		*g_ownerbase;
+extern int8_t		*g_ownerbase;
 extern t_process	*g_cur_process;
 
 // corewar 
@@ -186,7 +186,7 @@ void			*memset_(void *b, int c, size_t len);
 void    		loader(t_vm *vm, char *filename);
 
 //process
-void            p_init_process(t_vm *vm, void * pc);
+void            p_init_process(t_vm *vm, void * pc, t_champ *);
 void    		p_process_loop(t_vm   *vm);
 void    		p_fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far);
 
