@@ -6,7 +6,7 @@
 /*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/05 13:20:57 by anjansse         ###   ########.fr       */
+/*   Updated: 2019/08/06 00:02:49 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ void    print_mem(t_vm *vm, t_gui *gui)
         {
             init_pair(1, COLOR_GREEN, COLOR_BLACK);
             wattron(gui->win, COLOR_PAIR(1));
-            mvwprintw(gui->win, y, x, "%02x", vm->owner[i]);
+            mvwprintw(gui->win, y, x, "%02x", vm->memory[i]);
             wattroff(gui->win, COLOR_PAIR(1));
         }
         else
-            mvwprintw(gui->win, y, x, "%02x", vm->owner[i]);
+            mvwprintw(gui->win, y, x, "%02x", vm->memory[i]);
 
         i++;
     }
