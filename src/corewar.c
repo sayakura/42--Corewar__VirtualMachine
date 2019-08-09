@@ -6,7 +6,7 @@
 /*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/05 13:00:43 by anjansse         ###   ########.fr       */
+/*   Updated: 2019/08/08 16:54:18 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,16 @@ void    cw_run(t_vm *vm)
     char        c;
 
     gui = malloc(sizeof(t_gui));
-    init_screen(gui);
-    // printf("Champion name: %s\n", vm->corewar.champions->name);
+    gui->win = init_screen(gui->win, MAX_X + 1, 1, 1);
+    gui->win_info = init_screen(gui->win_info, 30, 1, MAX_X + 2);
     while (1)
     {
-        if ((c = update_screen(gui)) == 27)
+        update_screen(gui->win_info);
+        print_info(gui, vm);
+        if ((c = update_screen(gui->win)) == 27 || (vm->corewar.cycle > 1000))
             break ;
         ++vm->corewar.cycle;
-        //if (++vm->corewar.cycle == vm->corewar.dump_cycle)
         print_mem(vm, gui);
-        // usleep(15000);
         p_process_loop(vm, gui);
         if (vm->corewar.cycle > vm->corewar.kill_cycle)
             //printf("start killing!\n");
@@ -47,7 +47,6 @@ void    cw_run(t_vm *vm)
     }
     end_screen();
     free(gui);
-    // printf("Ended screen properly.\n");
 }
 
 /**

@@ -62,8 +62,8 @@
 # define CP g_cur_process
 # define INSTR g_op_tab
 # define REG(i) g_cur_process->registers[i]
-# define MAX_X 175
-# define MAX_Y 75
+# define MAX_X 192
+# define MAX_Y 64
 
 typedef enum e_endianess
 {
@@ -166,6 +166,7 @@ typedef struct 		s_instr
 
 typedef struct  	s_gui {
     WINDOW      	*win;
+	WINDOW			*win_info;
 }               	t_gui;
 
 typedef void(*t_instr_hdlr)(t_vm *, t_instr *);
@@ -209,8 +210,9 @@ void    		read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far);
 
 /* GRAPHIC USER INTERFACE FUNCTIONS */
 
-void            init_screen(t_gui *gui);
+WINDOW          *init_screen(WINDOW *win, int max_x, int y, int x);
 void            end_screen(void);
-char            update_screen(t_gui *gui);
+char            update_screen(WINDOW *win);
+void        	print_info(t_gui *gui, t_vm *vm);
 
 #endif
