@@ -6,7 +6,7 @@
 /*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/05 13:03:23 by anjansse         ###   ########.fr       */
+/*   Updated: 2019/08/16 11:53:22 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ void    instruction_cycle(t_vm *vm, t_process *cp)
 }
 
 
-void    p_process_loop(t_vm   *vm, t_gui *gui)
+void    p_process_loop(t_vm   *vm)
 {
     t_process       *curr_p;
     static uint32_t r_cycles[MAX_PLAYERS + 1];

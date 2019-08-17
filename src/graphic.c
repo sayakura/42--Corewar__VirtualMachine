@@ -7,15 +7,17 @@ void        print_info(t_gui *gui, t_vm *vm)
     init_pair(9, COLOR_WHITE, COLOR_BLACK);
     wattron(gui->win, COLOR_PAIR(9));
     mvwprintw(gui->win_info, 1, 1, "Cycles: %d", vm->corewar.cycle);
+    mvwprintw(gui->win_info, 2, 1, "Speed: %u", ((gui->speed - 1000) / 7000) + 1);
+    mvwprintw(gui->win_info, 3, 1, "Speed: %u", gui->speed);
     wattroff(gui->win, COLOR_PAIR(9));
 }               
 
 /* Update current status of window */
 
-char        update_screen(WINDOW *win)
+char        update_screen(WINDOW *win, uint32_t speed)
 {
     // handles speed of cycles.
-    usleep(15000);
+    usleep(speed);
     clear();
     wrefresh(win);
     return (wgetch(win));

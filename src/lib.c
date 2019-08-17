@@ -86,3 +86,13 @@ void		*memset_(void *b, int c, size_t len)
 		*ptr++ = c;
 	return (b);
 } 
+
+int			scmp_(char *s1, char *s2)
+{
+	while (*s1 == *s2 && *s1 && *s2)
+	{
+		s1++;
+		s2++;
+	}
+	return (*s1 - *s2);
+}

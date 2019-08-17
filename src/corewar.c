@@ -6,7 +6,7 @@
 /*   By: anjansse <anjansse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/08 16:54:18 by anjansse         ###   ########.fr       */
+/*   Updated: 2019/08/17 15:50:54 by anjansse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,25 +27,33 @@ void    cw_run(t_vm *vm)
     char        c;
 
     gui = malloc(sizeof(t_gui));
-    gui->win = init_screen(gui->win, MAX_X + 1, 1, 1);
-    gui->win_info = init_screen(gui->win_info, 30, 1, MAX_X + 2);
+    if (vm->flag &= FL_GUI)
+    {
+        gui->win = init_screen(gui->win, MAX_X + 1, 1, 1);
+        gui->win_info = init_screen(gui->win_info, 30, 1, MAX_X + 2);
+        gui->speed = 23000;
+    }
     while (1)
     {
-        update_screen(gui->win_info);
-        print_info(gui, vm);
-        if ((c = update_screen(gui->win)) == 27 || (vm->corewar.cycle > 1000))
-            break ;
+        if (vm->flag &= FL_GUI)
+        {
+            update_screen(gui->win_info, gui->speed);
+            print_info(gui, vm);
+            if ((c = update_screen(gui->win, gui->speed)) == 27 || (vm->corewar.cycle > 1000))
+                break ;
+            if ((c = update_screen(gui->win, gui->speed)) == 32)
+                gui->speed = (gui->speed == 8000) ? 23000 : gui->speed - 7000;
+        }
         ++vm->corewar.cycle;
         print_mem(vm, gui);
-        p_process_loop(vm, gui);
+        p_process_loop(vm);
         if (vm->corewar.cycle > vm->corewar.kill_cycle)
             //printf("start killing!\n");
         if (!vm->nprocess)
             ERROR("some one win!");
-        // if (vm->corewar.cycle > 1000)
-            // break ;
     }
-    end_screen();
+    if (vm->flag &= FL_GUI)
+        end_screen();
     free(gui);
 }
 
@@ -77,6 +85,7 @@ void    cw_read_args(t_vm *vm, int ac, char **av)
  */
 void    cw_cleanup(t_vm *vm)
 {
+    (void)vm;
     // t_process *tmp;
     
     // tmp = vm->process_list;

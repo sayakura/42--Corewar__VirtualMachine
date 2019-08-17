@@ -19,6 +19,9 @@
 #include "op.h"
 #include "handler.h"
 
+#define FL_GUI 0x01
+#define FL_DUMP 0x02
+
 #define ITERATOR -1
 #define INC(num) (++num)
 #define ONEBYTE 1
@@ -144,6 +147,7 @@ typedef struct      s_vm
     t_process       *process_list;
 	uint8_t			nprocess;
     t_cw            corewar;
+	unsigned char	flag;
 	t_bool 			debug_mode;
 }                   t_vm;
 
@@ -167,6 +171,7 @@ typedef struct 		s_instr
 typedef struct  	s_gui {
     WINDOW      	*win;
 	WINDOW			*win_info;
+	uint32_t		speed;
 }               	t_gui;
 
 typedef void(*t_instr_hdlr)(t_vm *, t_instr *);
@@ -194,7 +199,7 @@ void    		loader(t_vm *vm, char *filename);
 
 //process
 void            p_init_process(t_vm *vm, void * pc, t_champ *);
-void    		p_process_loop(t_vm   *vm, t_gui *gui);
+void    		p_process_loop(t_vm   *vm);
 void    		p_fork_process(t_vm *vm, t_process *parent, int32_t offset, t_bool far);
 
 // champion
@@ -212,7 +217,7 @@ void    		read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far);
 
 WINDOW          *init_screen(WINDOW *win, int max_x, int y, int x);
 void            end_screen(void);
-char            update_screen(WINDOW *win);
+char            update_screen(WINDOW *win, uint32_t speed);
 void        	print_info(t_gui *gui, t_vm *vm);
 
 #endif
