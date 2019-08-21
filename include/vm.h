@@ -15,6 +15,7 @@
 #define VM_H
 
 #include <unistd.h>
+#include <limits.h>
 #include "common.h"
 #include "op.h"
 #include "handler.h"
@@ -122,6 +123,7 @@ typedef struct      	s_process
 	t_champ				*champion;
 	struct s_process	*next;
 	t_bool				carry;
+	uint32_t			last_live;
 }                   	t_process;
 
 typedef struct      s_cw
@@ -132,6 +134,9 @@ typedef struct      s_cw
     uint8_t         nplayers;
 	uint32_t		dump_cycle;
 	uint32_t 		kill_cycle;
+	int32_t			ctd;
+	uint32_t		nbr_live_called;
+	uint32_t		checks;
 }                   t_cw;
 
 
@@ -184,6 +189,7 @@ void			bzero_(void *rsi, size_t rcx);
 void			*memset_(void *b, int c, size_t len);
 //loader
 void    		loader(t_vm *vm, char *filename);
+void			dump_mem(t_vm *vm);
 
 //process
 void            p_init_process(t_vm *vm, void * pc, t_champ *);

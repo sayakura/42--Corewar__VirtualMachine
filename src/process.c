@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/18 02:39:18 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/04 15:43:12 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/18 18:18:46 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,6 +222,30 @@ void    p_process_loop(t_vm   *vm)
             }
         }
         curr_p = curr_p->next;
+    }
+}
+
+void    p_kill_process(t_vm *vm, int32_t id)
+{
+    t_process   *last;
+    t_process   *cur;
+
+    cur = vm->process_list;
+    last = cur;
+    if (cur->pid == id)
+    {
+        vm->process_list = cur->next;
+        free(cur);
+    }
+    cur = cur->next;
+    while (cur)
+    {
+        if (cur->pid == id)
+        {
+            last->next = cur->next;
+            free(cur);
+            break ;
+        }
     }
 }
 // .name "zork"

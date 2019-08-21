@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:32:01 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/04 15:50:36 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/18 19:00:16 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,25 @@
 #include "vm.h"
 
 t_byte	*g_base;
+
+void    cw_killing(t_vm *vm)
+{
+    printf("start killing!\n");
+    FOR_EACH(process, vm->process_list)
+    {
+        if (vm->corewar.cycle - process->last_live >= vm->corewar.ctd)
+            ;// kill process
+    }
+    if (++vm->corewar.checks >= MAX_CHECKS ||
+        vm->corewar.nbr_live_called >= NBR_LIVE)
+    {
+        vm->corewar.checks = 0;
+        vm->corewar.ctd = (vm->corewar.ctd -= CYCLE_DELTA) < 0 ?
+            0 : vm->corewar.ctd;
+        
+    }
+    vm->corewar.nbr_live_called = 0;
+}
 
 /**
  *  run corewar game
@@ -27,10 +46,13 @@ void    cw_run(t_vm *vm)
     {
         ++vm->corewar.cycle;
         if (++vm->corewar.cycle == vm->corewar.dump_cycle)
-            print_mem(vm);
+        {
+            dump_mem(vm);
+            break ;
+        }            
         p_process_loop(vm);
-        if (vm->corewar.cycle > vm->corewar.kill_cycle)
-            ;//printf("start killing!\n");
+        if (!(vm->corewar.cycle % vm->corewar.kill_cycle))
+            cw_killing(vm);
         if (!vm->nprocess)
             ERROR("some one win!");
         if (vm->corewar.cycle > 1000)
@@ -50,6 +72,7 @@ void    cw_read_args(t_vm *vm, int ac, char **av)
 {
     int     i;
 
+    vm->corewar.dump_cycle = 30;
     i = 1;
     while (i < ac)
     {
@@ -85,6 +108,7 @@ void    cw_cleanup(t_vm *vm)
 void    cw_env_init(t_vm *vm, int nplayers)
 {
     bzero_(vm, sizeof(t_vm));
+    vm->corewar.dump_cycle = UINT_MAX;
     vm->debug_mode = 1;
     vm->corewar.nplayers = nplayers;
     MAP_START = vm->memory;

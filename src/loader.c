@@ -6,7 +6,7 @@
 /*   By: qpeng <qpeng@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 02:31:59 by qpeng             #+#    #+#             */
-/*   Updated: 2019/08/04 15:52:40 by qpeng            ###   ########.fr       */
+/*   Updated: 2019/08/18 17:19:57 by qpeng            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,28 @@ void    print_mem(t_vm *vm)
             printf("%02d", vm->owner[i]);
         else 
             printf("__");
+        printf(" ");
+        i++;
+    }
+    printf("\n");
+}
+
+void    dump_mem(t_vm *vm)
+{
+    int                 i;
+    unsigned            siz;
+
+    i = 0;
+    siz = (unsigned)sqrt(MEM_SIZE);
+    while (i < MEM_SIZE) // < MEM_SIZE
+    {
+        if (i % siz == 0)
+        {
+            if (i)
+                printf("\n");
+            printf("%#06x : ", i);
+        }
+        h_puthex(vm->memory[i]);
         printf(" ");
         i++;
     }

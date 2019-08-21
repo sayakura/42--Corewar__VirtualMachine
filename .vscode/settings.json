@@ -7,6 +7,7 @@
         "corewar.h": "c",
         "memory.h": "c",
         "process.h": "c",
-        "vm.h": "c"
+        "vm.h": "c",
+        "__locale": "c"
     }
 }
