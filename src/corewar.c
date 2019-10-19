@@ -45,18 +45,18 @@ void    cw_run(t_vm *vm)
     while (1)
     {
         ++vm->corewar.cycle;
-        if (++vm->corewar.cycle == vm->corewar.dump_cycle)
-        {
+        if (vm->corewar.cycle == vm->corewar.dump_cycle)
             dump_mem(vm);
-            break ;
-        }            
-        p_process_loop(vm);
-        if (!(vm->corewar.cycle % vm->corewar.kill_cycle))
-            cw_killing(vm);
-        if (!vm->nprocess)
-            ERROR("some one win!");
-        if (vm->corewar.cycle > 1000)
-            break ;
+        else
+        {
+            p_process_loop(vm);
+            if (!(vm->corewar.cycle % vm->corewar.kill_cycle))
+                cw_killing(vm);
+            if (!vm->nprocess)
+                ERROR("some one win!");
+            if (vm->corewar.cycle > 1000)
+                break ;
+        }
     }
 }
 

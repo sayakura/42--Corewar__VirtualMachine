@@ -170,15 +170,38 @@ void    decode_with_acb(t_byte **pc, t_arg *arg, t_op *op)
     }
 }
 
+void    fetch(t_instr *instr, t_byte **pc)
+{
+    instr->icode = **pc;
+    if (INSTR_LOOK_UP[instr->icode].coding_byte)
+        instr->acb = *(++*pc);
+    else 
+    {
+        
+    }
+
+    
+    
+}
+
 void    instruction_cycle(t_vm *vm, t_process *cp)
 {
+    t_instr     instr;
+
+    val_p = 0;
+    fetch(&instr, &cp->pc);
+
+
+   
+
     t_op                *op;
     static t_instr      i;
     
     i.instr = *cp->pc;
     cp->cpc = i.pc = cp->pc;
-    op = &INSTR[i.instr - 1];
+    op = &INSTR_LOOK_UP[i.instr - 1];
     i.argc = op->argc;
+
     if (op->coding_byte)
         decode_with_acb(&cp->pc, i.arg, op);
     else
@@ -201,23 +224,14 @@ void    p_process_loop(t_vm   *vm)
     curr_p = vm->process_list;
     while (curr_p)
     {
-        //printf("current cycle: %d l: %d, %d\n", vm->corewar.cycle, r_cycles[curr_p->pid + 1], *(curr_p->pc));
-        if (*(curr_p->pc) && *(curr_p->pc) <= 16)
+        if (*(curr_p->pc) >= 0 && *(curr_p->pc) <= 16)
         {
             if (!r_cycles[curr_p->pid + 1])
-                r_cycles[curr_p->pid + 1] = INSTR[*(curr_p->pc) - 1].cycles;
+                r_cycles[curr_p->pid + 1] = INSTR_LOOK_UP[*(curr_p->pc) - 1].cycles;
             r_cycles[curr_p->pid + 1]--;
             if (!r_cycles[curr_p->pid + 1])
             {
-                printf("Pid: %d\n", curr_p->pid);
-                printf("Cycle: %d\n", vm->corewar.cycle);
-                if (vm->debug_mode)
-                    h_print_register(curr_p);
                 instruction_cycle(vm, curr_p);
-                 if (vm->debug_mode)
-                    h_print_register(curr_p);
-                printf("%p %x\n", curr_p->pc, *(curr_p->pc));
-                printf("---------------\n");
                 r_cycles[curr_p->pid + 1] ^= r_cycles[curr_p->pid + 1];
             }
         }
@@ -246,6 +260,8 @@ void    p_kill_process(t_vm *vm, int32_t id)
             free(cur);
             break ;
         }
+        else 
+            cur = cur->next;
     }
 }
 // .name "zork"

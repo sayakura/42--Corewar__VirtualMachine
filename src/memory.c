@@ -99,7 +99,7 @@ void    read_arg(t_arg *arg, int32_t *buff, t_bool addressing, t_bool far)
     }
     else if (arg->argvt == DIRECT_TYPE)
     {
-        READ_(arg->argv, buff, INSTR[*PC - 1].truncate ? 2 : 4);
+        READ_(arg->argv, buff, INSTR_LOOK_UP[*PC - 1].truncate ? 2 : 4);
     }
     else
     {

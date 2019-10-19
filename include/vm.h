@@ -61,7 +61,7 @@
 # define MOV(r1, r2) WRITE_(&r1, &r2, 4);
 # define PC g_cur_process->cpc
 # define CP g_cur_process
-# define INSTR g_op_tab
+# define INSTR_LOOK_UP g_op_tab
 # define REG(i) g_cur_process->registers[i]
 
 typedef enum e_endianess
@@ -158,14 +158,14 @@ typedef	struct 		s_arg
 
 typedef struct 		s_instr
 {
-	t_byte 			*pc;
-	t_byte			instr;
-	t_byte 			argc;
-	t_byte			*argv[MAX_ARGS_NUMBER];
-	t_byte			argvt[MAX_ARGS_NUMBER];
-	t_arg			arg[MAX_ARGS_NUMBER];
-	t_process		*context;
+	t_byte 			icode;
+	t_byte 			acb;
+	t_byte			val_a;
+	t_byte			val_b;
+	t_byte			val_c;
+	t_byte			val_e;
 }					t_instr;
+
 
 typedef void(*t_instr_hdlr)(t_vm *, t_instr *);
 
